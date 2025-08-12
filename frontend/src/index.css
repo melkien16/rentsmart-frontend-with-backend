@@ -1,0 +1,175 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom responsive utilities */
+@layer utilities {
+  /* Smooth scrolling for better mobile experience */
+  html {
+    scroll-behavior: smooth;
+  }
+
+  /* Better touch targets for mobile */
+  .touch-target {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  /* Optimize animations for mobile */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+
+  /* Mobile-first responsive text sizing */
+  .text-responsive-xs {
+    font-size: clamp(0.75rem, 2vw, 0.875rem);
+  }
+
+  .text-responsive-sm {
+    font-size: clamp(0.875rem, 2.5vw, 1rem);
+  }
+
+  .text-responsive-base {
+    font-size: clamp(1rem, 3vw, 1.125rem);
+  }
+
+  .text-responsive-lg {
+    font-size: clamp(1.125rem, 3.5vw, 1.25rem);
+  }
+
+  .text-responsive-xl {
+    font-size: clamp(1.25rem, 4vw, 1.5rem);
+  }
+
+  .text-responsive-2xl {
+    font-size: clamp(1.5rem, 5vw, 2rem);
+  }
+
+  .text-responsive-3xl {
+    font-size: clamp(2rem, 6vw, 3rem);
+  }
+
+  .text-responsive-4xl {
+    font-size: clamp(2.5rem, 7vw, 4rem);
+  }
+
+  .text-responsive-5xl {
+    font-size: clamp(3rem, 8vw, 5rem);
+  }
+
+  .text-responsive-6xl {
+    font-size: clamp(4rem, 10vw, 6rem);
+  }
+
+  .text-responsive-7xl {
+    font-size: clamp(5rem, 12vw, 7rem);
+  }
+
+  /* Responsive spacing utilities */
+  .space-responsive-xs {
+    margin: clamp(0.25rem, 1vw, 0.5rem);
+  }
+
+  .space-responsive-sm {
+    margin: clamp(0.5rem, 2vw, 1rem);
+  }
+
+  .space-responsive-md {
+    margin: clamp(1rem, 3vw, 1.5rem);
+  }
+
+  .space-responsive-lg {
+    margin: clamp(1.5rem, 4vw, 2rem);
+  }
+
+  .space-responsive-xl {
+    margin: clamp(2rem, 5vw, 3rem);
+  }
+
+  /* Mobile-optimized hover effects */
+  @media (hover: hover) {
+    .hover-lift {
+      transition: transform 0.2s ease-in-out;
+    }
+
+    .hover-lift:hover {
+      transform: translateY(-2px);
+    }
+  }
+
+  /* Touch-friendly button sizing */
+  .btn-touch {
+    min-height: 44px;
+    min-width: 44px;
+    padding: 12px 16px;
+  }
+
+  /* Responsive container padding */
+  .container-responsive {
+    padding-left: clamp(1rem, 4vw, 2rem);
+    padding-right: clamp(1rem, 4vw, 2rem);
+  }
+
+  /* Mobile-optimized grid gaps */
+  .gap-responsive {
+    gap: clamp(1rem, 3vw, 1.5rem);
+  }
+
+  .gap-responsive-lg {
+    gap: clamp(1.5rem, 4vw, 2rem);
+  }
+
+  .gap-responsive-xl {
+    gap: clamp(2rem, 5vw, 3rem);
+  }
+}
+
+/* Custom scrollbar for better mobile experience */
+@layer components {
+  .custom-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(16, 185, 129, 0.3) transparent;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background-color: rgba(16, 185, 129, 0.3);
+    border-radius: 3px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(16, 185, 129, 0.5);
+  }
+}
+
+/* Performance optimizations for mobile */
+@layer base {
+  * {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  body {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* Optimize images for mobile */
+  img {
+    max-width: 100%;
+    height: auto;
+  }
+}
