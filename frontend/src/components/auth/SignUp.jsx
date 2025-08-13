@@ -1,13 +1,5 @@
 import React, { useState, useEffect } from "react";
-import {
-  Mail,
-  Lock,
-  User,
-  Phone,
-  MapPin,
-  Image,
-  Zap,
-} from "lucide-react";
+import { Mail, Lock, User, Phone, MapPin, Image, Zap } from "lucide-react";
 
 import { toast } from "react-toastify";
 import { useSelector, useDispatch } from "react-redux";
@@ -17,6 +9,8 @@ import { FloatingInput, FloatingPasswordInput } from "../ui/FloatingInput";
 import { useRegisterMutation } from "../../slices/usersApiSlice";
 import Loader from "../ui/Loader";
 import { setCredentials } from "../../slices/authSlice";
+import { setWalletInfo } from "../../slices/walletSlice";
+import { useLazyGetWalletByUserIdQuery } from "../../slices/walletsApiSlice";
 
 export const SignUp = () => {
   const [formData, setFormData] = useState({
@@ -41,6 +35,8 @@ export const SignUp = () => {
   useEffect(() => {
     if (userInfo) navigate(redirect);
   }, [userInfo, navigate, redirect]);
+
+  const [getWalletByUserId] = useLazyGetWalletByUserIdQuery();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -75,6 +71,10 @@ export const SignUp = () => {
         avatar,
         password,
       }).unwrap();
+
+      // Fetch wallet info after registration
+      const walletData = await getWalletByUserId(res._id).unwrap();
+      dispatch(setWalletInfo(walletData));
       toast.success("Registration successful!");
       dispatch(setCredentials({ ...res }));
       navigate(redirect);

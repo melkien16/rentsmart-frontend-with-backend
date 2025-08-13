@@ -6,7 +6,9 @@ import { Button } from "../ui/Button";
 import { useNavigate, useLocation, Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { useLoginMutation } from "../../slices/usersApiSlice";
+import { useLazyGetWalletByUserIdQuery } from "../../slices/walletsApiSlice";
 import { setCredentials } from "../../slices/authSlice";
+import { setWalletInfo } from "../../slices/walletSlice";
 import Loader from "../ui/Loader";
 
 export const SignIn = () => {
@@ -31,14 +33,21 @@ export const SignIn = () => {
     }
   }, [userInfo, navigate, redirect]);
 
+  const [getWalletByUserId] = useLazyGetWalletByUserIdQuery();
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     const { email, password } = formData;
+
     try {
       const res = await login({ email, password }).unwrap();
       dispatch(setCredentials(res));
-      console.log("Login successful:", res);
-      navigate(redirect || "/user"); // fallback if redirect undefined
+
+      const walletData = await getWalletByUserId(res._id).unwrap();
+      dispatch(setWalletInfo(walletData));
+
+      toast.success("Login successful");
+      navigate(redirect || "/user");
     } catch (err) {
       toast.error(err?.data?.message || err.error || "Login failed");
     }
@@ -140,14 +149,14 @@ export const SignIn = () => {
             >
               {isLoading ? "Signing In..." : "Sign In"}
             </Button>
-            { isLoading && <Loader /> }
+            {isLoading && <Loader />}
           </form>
 
           {/* Switch to Sign Up */}
           <div className="mt-6 text-center">
             <span className="text-gray-400">Don't have an account? </span>
             <Link
-              to = {`${redirect ? `/signup?redirect=${redirect}` : "/signup"}`}
+              to={`${redirect ? `/signup?redirect=${redirect}` : "/signup"}`}
               className="text-emerald-400 hover:text-emerald-300 font-medium transition-colors"
             >
               Sign up
