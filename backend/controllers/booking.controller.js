@@ -11,6 +11,8 @@ import {
 } from "../utils/Constants.js";
 import { generateCode } from "../utils/generateCode.js";
 
+const adminId = "689aa5de797dfb5254ac4d16";
+
 // @desc    Create new booking
 // @route   POST /api/bookings
 // @access  Private
@@ -25,9 +27,10 @@ const createBooking = asyncHandler(async (req, res) => {
   }
 
   const user = await User.findById(userId);
-  const wallet = await Wallet.findOne({ user: userId });
+  const userWallet = await Wallet.findOne({ user: userId });
+  const adminWallet = await Wallet.findOne({ user: adminId });
 
-  if (!wallet) {
+  if (!userWallet) {
     res.status(400);
     throw new Error("User wallet not found");
   }
@@ -37,7 +40,7 @@ const createBooking = asyncHandler(async (req, res) => {
   const serviceFee = price * serviceFeeRate;
   const totalPrice = price + serviceFee;
 
-  if (wallet.balance < totalPrice) {
+  if (userWallet.balance < totalPrice) {
     res.status(400);
     throw new Error("Insufficient wallet balance");
   }
@@ -47,8 +50,20 @@ const createBooking = asyncHandler(async (req, res) => {
   const returnCode = generateCode();
 
   // Deduct totalPrice from wallet balance here if you want immediate deduction
-  wallet.balance -= totalPrice;
-  await wallet.save();
+  userWallet.balance -= totalPrice;
+  userWallet.transactions.push({
+    type: "debit",
+    amount: totalPrice,
+    description: `Booking for item ${item.name} from ${startDate} to ${endDate}`,
+  });
+  adminWallet.balance += serviceFee;
+  adminWallet.transactions.push({
+    type: "credit",
+    amount: serviceFee,
+    description: `Service fee for booking of item ${item.name} by user ${user.name}`,
+  });
+  await adminWallet.save();
+  await userWallet.save();
 
   const booking = await Booking.create({
     user: userId,
@@ -138,7 +153,7 @@ const getBookingsForOwner = asyncHandler(async (req, res) => {
 // @route   PUT /api/bookings/:id/cancel
 // @access  Private
 const cancelBooking = asyncHandler(async (req, res) => {
-  const booking = await Booking.findById(req.params.id);
+  const booking = await Booking.findById(req.params.id).populate("user item");
   if (!booking) {
     res.status(404);
     throw new Error("Booking not found");
@@ -149,10 +164,63 @@ const cancelBooking = asyncHandler(async (req, res) => {
     throw new Error("Only pending bookings can be canceled");
   }
 
-  booking.paymentStatus = "refunded";
-  await booking.save();
+  // Find user's wallet
+  const userWallet = await Wallet.findOne({ user: booking.user._id });
+  if (!userWallet) {
+    res.status(400);
+    throw new Error("User wallet not found");
+  }
 
-  res.json({ message: "Booking cancelled and refunded", booking });
+  // Find admin wallet (replace ADMIN_ID with actual admin ObjectId)
+  const adminWallet = await Wallet.findOne({ user: process.env.ADMIN_ID });
+  if (!adminWallet) {
+    res.status(400);
+    throw new Error("Admin wallet not found");
+  }
+
+  const refundAmount = booking.totalPrice;
+
+  // Check if admin has enough balance to refund
+  if (adminWallet.balance < refundAmount) {
+    res.status(400);
+    throw new Error("Admin wallet has insufficient funds to refund");
+  }
+
+  // Deduct from admin wallet
+  adminWallet.balance -= refundAmount;
+  adminWallet.transactions.push({
+    type: "debit",
+    amount: refundAmount,
+    description: `Refund for booking ${booking._id} cancelled by user ${booking.user.name}`,
+  });
+  await adminWallet.save();
+
+  // Credit to user wallet
+  userWallet.balance += refundAmount;
+  userWallet.transactions.push({
+    type: "credit",
+    amount: refundAmount,
+    description: `Refund for booking ${booking._id} cancelled by admin`,
+  });
+  await userWallet.save();
+
+  // Update booking
+  booking.paymentStatus = "refunded";
+  booking.status = "cancelled";
+  await booking.save();
+  await Notification.create({
+    user: booking.user._id,
+    type: "booking_cancelled",
+    message: `Your booking #${booking._id} has been cancelled and ${refundAmount} birr has been refunded to your wallet.`,
+    data: {
+      bookingId: booking._id,
+      refundAmount,
+    },
+  });
+
+  res.json({
+    message: `Booking cancelled. ${refundAmount} refunded to user from admin wallet.`
+  });
 });
 
 // @desc    Update booking status (confirmed or completed)
@@ -161,6 +229,18 @@ const cancelBooking = asyncHandler(async (req, res) => {
 const updateBookingStatus = asyncHandler(async (req, res) => {
   const { status, code } = req.body;
   const booking = await Booking.findById(req.params.id);
+
+  //finding owner of the item in the booking
+  const item = await Item.findById(booking.item);
+  if (!item) {
+    res.status(404);
+    throw new Error("Item not found");
+  }
+  const ownerId = item.owner.toString();
+
+  // finding the owner and admin wallets
+  const ownerWallet = await Wallet.findOne({ user: ownerId });
+  const adminWallet = await Wallet.findOne({ user: adminId });
 
   if (!booking) {
     res.status(404);
@@ -206,35 +286,124 @@ const updateBookingStatus = asyncHandler(async (req, res) => {
     booking.returnCodeEnteredAt = now;
     booking.status = "returned";
 
-    // Penalty logic for late return
+    // Calculate late days (if any)
+    let delayedDays = 0;
     if (now > booking.endDate) {
-      const lateDays = Math.ceil(
-        (now - booking.endDate) / (1000 * 60 * 60 * 24)
-      );
-      const penaltyPerDay = 10; // example fixed penalty per day in your currency
+      delayedDays = Math.ceil((now - booking.endDate) / (1000 * 60 * 60 * 24));
+    }
 
-      const totalPenalty = lateDays * penaltyPerDay;
+    if (delayedDays > 0) {
+      booking.delayedDays = delayedDays;
 
-      // Deduct penalty from user wallet or collateral - example:
-      const wallet = await Wallet.findOne({ user: booking.user });
-      if (!wallet) {
+      // Penalty = item price * 1.5 * delayedDays
+      const penaltyAmount = booking.price * 1.5 * delayedDays;
+      booking.penaltyAmount = penaltyAmount;
+      //calculate the penalty amout for the Owner by 1.25
+      const penaltyAmountForOwner = booking.price * 1.25 * delayedDays;
+
+      // Deduct penalty from wallet or set debt
+      const userWallet = await Wallet.findOne({ user: booking.user });
+      if (!userWallet) {
         res.status(400);
         throw new Error("User wallet not found for penalty deduction");
       }
 
-      if (wallet.balance < totalPenalty) {
-        // Handle insufficient balance - e.g., set debt or notify user
-        // For simplicity, just throw error here
-        res.status(400);
-        throw new Error("Insufficient balance to cover late return penalty");
+      if (userWallet.balance >= penaltyAmount) {
+        userWallet.balance -= penaltyAmount;
+        userWallet.transactions.push({
+          type: "debit",
+          amount: penaltyAmount,
+          description: `Late return penalty for booking ${booking._id}`,
+        });
+        await userWallet.save();
+
+        //pay this penalty to the admin wallet
+        adminWallet.balance += penaltyAmount;
+        adminWallet.transactions.push({
+          type: "credit",
+          amount: penaltyAmount,
+          description: `Late return penalty received for booking ${booking._id}`,
+        });
+        await adminWallet.save();
+
+        ownerWallet.balance += penaltyAmountForOwner;
+        ownerWallet.transactions.push({
+          type: "credit",
+          amount: penaltyAmountForOwner,
+          description: `Late return penalty received for booking ${booking._id} (Owner)`,
+        });
+        await ownerWallet.save();
+
+        // deduct the owner penalty from the admin wallet
+        adminWallet.balance -= penaltyAmountForOwner;
+        adminWallet.transactions.push({
+          type: "debit",
+          amount: penaltyAmountForOwner,
+          description: `Late return penalty paid to owner for booking ${booking._id}`,
+        });
+        await adminWallet.save();
+
+        await Notification.create({
+          user: booking.user,
+          type: "penalty_deduction",
+          message: `Late return penalty of ${penaltyAmount} birr deducted from your wallet.`,
+          data: {
+            bookingId: booking._id,
+            penaltyAmount,
+          },
+        });
+      } else {
+        // If insufficient balance, pay the available balance and make it negative his balance for the remaining penalty
+        const availableBalance = userWallet.balance;
+        userWallet.balance = -1 * (penaltyAmount - availableBalance);
+        userWallet.transactions.push({
+          type: "debit",
+          amount: availableBalance,
+          description: `Partial late return penalty for booking ${booking._id}`,
+        });
+        await userWallet.save();
+
+        adminWallet.balance += availableBalance;
+        adminWallet.transactions.push({
+          type: "credit",
+          amount: availableBalance,
+          description: `Partial late return penalty received for booking ${booking._id}`,
+        });
+        await adminWallet.save();
+
+        // the owner gets the full penalty amout for him
+        ownerWallet.balance += penaltyAmountForOwner;
+        ownerWallet.transactions.push({
+          type: "credit",
+          amount: penaltyAmountForOwner,
+          description: `Partial late return penalty received for booking ${booking._id} (Owner)`,
+        });
+        await ownerWallet.save();
+
+        // deduct the owner penalty from the admin wallet
+        adminWallet.balance -= penaltyAmountForOwner;
+        adminWallet.transactions.push({
+          type: "debit",
+          amount: penaltyAmountForOwner,
+          description: `Partial late return penalty paid to owner for booking ${booking._id}`,
+        });
+        await adminWallet.save();
+
+        const remaining = penaltyAmount - availableBalance;
+        await Notification.create({
+          user: booking.user,
+          type: "penalty_debt",
+          message: `Late return penalty of ${penaltyAmount} birr partially paid. Remaining debt: ${remaining} birr. Pay the remaining amount unless your collateral locked.`,
+          data: {
+            bookingId: booking._id,
+            penaltyAmount: remaining,
+          },
+        });
       }
-
-      wallet.balance -= totalPenalty;
-      await wallet.save();
-
-      // Optional: record penalty details in booking or a separate penalty collection
-      booking.lateReturnPenalty = totalPenalty;
-      booking.lateReturnDays = lateDays;
+    } else {
+      booking.delayedDays = 0;
+      booking.penaltyAmount = 0;
+      resPenaltyMessage = "Returned on time. No penalty applied.";
     }
   } else {
     booking.status = status;
@@ -242,7 +411,11 @@ const updateBookingStatus = asyncHandler(async (req, res) => {
 
   await booking.save();
 
-  res.json({ message: `Booking status updated to ${status}`, booking });
+  res.json({
+    message: `Booking status updated to ${status}`,
+    penaltyMessage: resPenaltyMessage,
+    booking,
+  });
 });
 
 export {
