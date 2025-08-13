@@ -21,7 +21,6 @@ const transactionSchema = new mongoose.Schema(
   },
   { _id: false }
 );
-
 const walletSchema = new mongoose.Schema(
   {
     user: {
@@ -35,6 +34,7 @@ const walletSchema = new mongoose.Schema(
       default: 0,
       required: true,
     },
+
     transactions: [transactionSchema],
   },
   {
