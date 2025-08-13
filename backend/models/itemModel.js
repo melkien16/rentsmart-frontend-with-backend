@@ -24,6 +24,10 @@ const itemSchema = new mongoose.Schema(
       type: String,
       default: "day",
     },
+    value: {
+      type: Number,
+      required: true,
+    },
     rating: {
       type: Number,
       default: 0,
