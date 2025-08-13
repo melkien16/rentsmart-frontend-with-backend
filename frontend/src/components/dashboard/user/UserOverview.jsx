@@ -10,14 +10,122 @@ import {
   Camera,
   Wrench,
   Laptop,
+  DollarSign,
+  Package,
+  TrendingUp,
+  Clock,
 } from "lucide-react";
 import { Card } from "../../ui/Card";
 import { Chart } from "../../ui/Chart";
 import { StatCard } from "../../ui/StatCard";
 import { ActivityFeed } from "../../ui/ActivityFeed";
-import { earningsData, categoryData, recentActivities, quickStats } from "./dummyData";
+import { useSelector } from "react-redux";
+import { earningsData, categoryData, recentActivities } from "./dummyData";
+import { useGetBookingForOwnerQuery } from "../../../slices/bookingsApiSlice";
+
+export const quickStats = [
+  {
+    title: "Wallet Balance",
+    value: "$1,247.50",
+    change: "+12.5%",
+    icon: DollarSign,
+    color: "emerald",
+    trend: "up",
+  },
+  {
+    title: "Active Rentals",
+    value: "8",
+    change: "+2 this week",
+    icon: Package,
+    color: "blue",
+    trend: "up",
+  },
+  {
+    title: "Monthly Earnings",
+    value: "$3,892.00",
+    change: "+23.1%",
+    icon: TrendingUp,
+    color: "purple",
+    trend: "up",
+  },
+  {
+    title: "Pending Requests",
+    value: "5",
+    change: "3 new today",
+    icon: Clock,
+    color: "orange",
+    trend: "neutral",
+  },
+];
 
 export const UserOverview = () => {
+  const { userWalletInfo } = useSelector((state) => state.wallet); // ✅ updated field name
+  const { data: bookings = [], isLoading } = useGetBookingForOwnerQuery();
+
+  console.log(userWalletInfo)
+
+  // Format currency
+  const formatCurrency = (amount) =>
+    amount?.toLocaleString("en-US", { style: "currency", currency: "USD" });
+
+  // Wallet balance
+  const walletBalance = userWalletInfo?.balance || 0;
+
+  // Active rentals (pending, confirmed, in_use)
+  const activeRentals = bookings.filter((b) =>
+    ["pending", "confirmed", "in_use"].includes(b.status)
+  ).length;
+
+  // Monthly earnings (completed this month)
+  const now = new Date();
+  const monthlyEarnings = bookings
+    .filter((b) => {
+      if (b.status !== "completed") return false;
+      const completedDate = new Date(b.updatedAt || b.createdAt);
+      return (
+        completedDate.getMonth() === now.getMonth() &&
+        completedDate.getFullYear() === now.getFullYear()
+      );
+    })
+    .reduce((sum, b) => sum + (b.totalPrice || 0), 0);
+
+  // Pending requests
+  const pendingRequests = bookings.filter((b) => b.status === "pending").length;
+
+  const quickStats = [
+    {
+      title: "Wallet Balance",
+      value: formatCurrency(walletBalance),
+      change: "",
+      icon: DollarSign,
+      color: "emerald",
+      trend: "up",
+    },
+    {
+      title: "Active Rentals",
+      value: activeRentals.toString(),
+      change: "",
+      icon: Package,
+      color: "blue",
+      trend: activeRentals > 0 ? "up" : "neutral",
+    },
+    {
+      title: "Monthly Earnings",
+      value: formatCurrency(monthlyEarnings),
+      change: "",
+      icon: TrendingUp,
+      color: "purple",
+      trend: monthlyEarnings > 0 ? "up" : "neutral",
+    },
+    {
+      title: "Pending Requests",
+      value: pendingRequests.toString(),
+      change: "",
+      icon: Clock,
+      color: "orange",
+      trend: pendingRequests > 0 ? "neutral" : "down",
+    },
+  ];
 
   return (
     <div className="space-y-6">
