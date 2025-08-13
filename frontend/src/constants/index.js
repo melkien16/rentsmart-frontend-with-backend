@@ -1,8 +1,8 @@
 export const BASE_URL = "";
 export const PRODUCTS_URL = "/api/items";
 export const CATEGORIES_URL = "/api/categories";
-export const PRODUCTS_ADMIN_URL = "/api/products/admin";
-export const PRODUCT_DETAILS_URL = "/api/products/";
+export const WALLETS_URL = "/api/wallets";
+export const BOOKING_URL = "/api/bookings";
 export const USERS_URL = "/api/users";
 export const ORDERS_URL = "/api/orders";
 export const PAYPAL_URL = "/api/config/paypal";
