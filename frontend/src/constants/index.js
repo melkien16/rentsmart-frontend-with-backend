@@ -4,6 +4,6 @@ export const CATEGORIES_URL = "/api/categories";
 export const WALLETS_URL = "/api/wallets";
 export const BOOKING_URL = "/api/bookings";
 export const USERS_URL = "/api/users";
-export const ORDERS_URL = "/api/orders";
+export const REVIEWS_URL = "/api/reviews";
 export const PAYPAL_URL = "/api/config/paypal";
 export const UPLOAD_URL = "/api/upload";
