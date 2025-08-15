@@ -23,44 +23,10 @@ import { useSelector } from "react-redux";
 import { earningsData, categoryData, recentActivities } from "./dummyData";
 import { useGetBookingForOwnerQuery } from "../../../slices/bookingsApiSlice";
 
-export const quickStats = [
-  {
-    title: "Wallet Balance",
-    value: "$1,247.50",
-    change: "+12.5%",
-    icon: DollarSign,
-    color: "emerald",
-    trend: "up",
-  },
-  {
-    title: "Active Rentals",
-    value: "8",
-    change: "+2 this week",
-    icon: Package,
-    color: "blue",
-    trend: "up",
-  },
-  {
-    title: "Monthly Earnings",
-    value: "$3,892.00",
-    change: "+23.1%",
-    icon: TrendingUp,
-    color: "purple",
-    trend: "up",
-  },
-  {
-    title: "Pending Requests",
-    value: "5",
-    change: "3 new today",
-    icon: Clock,
-    color: "orange",
-    trend: "neutral",
-  },
-];
-
 export const UserOverview = () => {
   const { userWalletInfo } = useSelector((state) => state.wallet); // ✅ updated field name
   const { data: bookings = [], isLoading } = useGetBookingForOwnerQuery();
+  console.log("booking: ",bookings);
 
   console.log(userWalletInfo)
 
