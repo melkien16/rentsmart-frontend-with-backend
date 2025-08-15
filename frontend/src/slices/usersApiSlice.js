@@ -23,8 +23,14 @@ const userApiSlice = apiSlice.injectEndpoints({
         method: "POST",
       }),
     }),
+    getUserPublicById: builder.query({
+      query: (id) => ({
+        url: `${USERS_URL}/public/${id}`,
+        method: "GET",
+      }),
+    }),
   }),
 });
 
-export const { useLoginMutation, useLogoutMutation, useRegisterMutation } =
+export const { useLoginMutation, useLogoutMutation, useRegisterMutation, useGetUserPublicByIdQuery } =
   userApiSlice;
