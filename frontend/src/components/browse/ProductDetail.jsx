@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
 import {
   ArrowLeft,
   Star,
@@ -17,39 +18,77 @@ import {
 } from "lucide-react";
 import { Card } from "../ui/Card";
 import { Button } from "../ui/Button";
+import { toast } from "react-toastify";
 import { useGetProductByIdQuery } from "../../slices/productsApiSlice";
 import Loader from "../ui/Loader";
 
-// Mock owner data for demonstration
-const mockOwners = {
-  "644e3d1e2c4a6343f0f4a8b3": {
-    id: "644e3d1e2c4a6343f0f4a8b3",
-    name: "Sarah Johnson",
-    email: "sarah@example.com",
-    avatar:
-      "https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=150",
-    rating: 4.9,
-    reviews: 127,
-    verified: true,
-    joined_date: "2022-03-15",
-    response_rate: 98,
-    response_time: "within 1 hour",
-    bio: "Professional designer and Apple enthusiast. I love sharing my tech with the creative community!",
-  },
-};
+import { useGetUserPublicByIdQuery } from "../../slices/usersApiSlice";
+import { useGetOwnerReviewSummaryQuery } from "../../slices/reviewsApiSlice";
+
+import { setBooking } from "../../slices/bookingSlice";
 
 export const ProductDetail = ({ onBack }) => {
+  // ----- STATE & REFS -----
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [selectedDates, setSelectedDates] = useState({ start: "", end: "" });
   const [isFavorited, setIsFavorited] = useState(false);
+
   const sliderRef = useRef();
   const { id } = useParams();
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  // ----- REDUX & API HOOKS -----
+  const { userInfo } = useSelector((state) => state.auth);
 
   const { data: product, isLoading, error } = useGetProductByIdQuery(id);
 
-  const owner = mockOwners[product?.owner] || {};
+  // Conditional queries for owner data
+  const { data: ownerPublicData } = useGetUserPublicByIdQuery(
+    product?.owner?._id,
+    {
+      skip: !product?.owner?._id,
+    }
+  );
+  const { data: ownerReviewSummary } = useGetOwnerReviewSummaryQuery(
+    product?.owner?._id,
+    {
+      skip: !product?.owner?._id,
+    }
+  );
 
-  // Hooks should always run regardless of loading/error state
+  // ----- DERIVED DATA -----
+  const owner = {
+    id: ownerPublicData?._id || product?.owner,
+    name: ownerPublicData?.name || "Unknown Owner",
+    email: ownerPublicData?.email || "No email provided",
+    avatar: ownerPublicData?.avatar || "https://via.placeholder.com/150",
+    rating: ownerReviewSummary?.averageRating || 0,
+    reviews: ownerReviewSummary?.totalReviews || 0,
+    joined_date: ownerPublicData?.createdAt,
+    verified: ownerPublicData?.verification?.isVerified || false,
+    bio: ownerPublicData?.bio || "No bio available",
+    phone: ownerPublicData?.phone || "No phone provided",
+    address: ownerPublicData?.address || "No address provided",
+    isPremium: ownerPublicData?.isPremium || false,
+  };
+
+  // ----- IMAGE NAVIGATION -----
+  const nextImage = () => {
+    if (!product?.images) return;
+    setCurrentImageIndex((prev) =>
+      prev === product.images.length - 1 ? 0 : prev + 1
+    );
+  };
+
+  const prevImage = () => {
+    if (!product?.images) return;
+    setCurrentImageIndex((prev) =>
+      prev === 0 ? product.images.length - 1 : prev - 1
+    );
+  };
+
+  // Keyboard arrow navigation
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (e.key === "ArrowLeft") prevImage();
@@ -59,24 +98,25 @@ export const ProductDetail = ({ onBack }) => {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [currentImageIndex]);
 
+  // Touch swipe navigation
   useEffect(() => {
     const slider = sliderRef.current;
     if (!slider) return;
+
     let startX = 0;
     let endX = 0;
-    const onTouchStart = (e) => {
-      startX = e.touches[0].clientX;
-    };
-    const onTouchMove = (e) => {
-      endX = e.touches[0].clientX;
-    };
+
+    const onTouchStart = (e) => (startX = e.touches[0].clientX);
+    const onTouchMove = (e) => (endX = e.touches[0].clientX);
     const onTouchEnd = () => {
       if (startX - endX > 50) nextImage();
       if (endX - startX > 50) prevImage();
     };
+
     slider.addEventListener("touchstart", onTouchStart);
     slider.addEventListener("touchmove", onTouchMove);
     slider.addEventListener("touchend", onTouchEnd);
+
     return () => {
       slider.removeEventListener("touchstart", onTouchStart);
       slider.removeEventListener("touchmove", onTouchMove);
@@ -84,19 +124,7 @@ export const ProductDetail = ({ onBack }) => {
     };
   }, [currentImageIndex]);
 
-  const nextImage = () => {
-    if (!product?.images) return;
-    setCurrentImageIndex((prev) =>
-      prev === product.images.length - 1 ? 0 : prev + 1
-    );
-  };
-  const prevImage = () => {
-    if (!product?.images) return;
-    setCurrentImageIndex((prev) =>
-      prev === 0 ? product.images.length - 1 : prev - 1
-    );
-  };
-
+  // date price calculation
   const calculateDays = () => {
     if (!selectedDates.start || !selectedDates.end) return 0;
     const start = new Date(selectedDates.start);
@@ -106,12 +134,46 @@ export const ProductDetail = ({ onBack }) => {
   };
 
   const totalPrice = product ? calculateDays() * product.price : 0;
+  const serviceFeeRate = userInfo?.isPremium ? 0.05 : 0.1;
 
-  // Now conditionally render JSX, not hooks
+  const serviceFee = Math.round(totalPrice * serviceFeeRate);
+
   if (isLoading) return <Loader />;
   if (error)
     return <div className="text-red-500">Error loading product details.</div>;
   if (!product) return <div className="text-red-500">Product not found.</div>;
+
+  const handleBookNow = async () => {
+    navigate("/booking-summary");
+    if (!userInfo) {
+      navigate(`/signin?redirect=/items/${id}`);
+      return;
+    }
+
+    if (!selectedDates.start || !selectedDates.end) {
+      toast.error("Please select start and end dates.");
+      return;
+    }
+
+    const bookingData = {
+      itemId: product._id,
+      itemName: product.title,
+      price: product.price,
+      serviceFee: serviceFee,
+      startDate: selectedDates.start,
+      image: product?.images[0],
+      endDate: selectedDates.end,
+      category: product.category,
+      ownerName: owner.name,
+      rating: product.rating,
+      reviews: product.reviews,
+      avatar: owner.avatar,
+      verified: owner.verified,
+      location: product.location,
+    };
+
+    dispatch(setBooking(bookingData));
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900">
@@ -346,28 +408,32 @@ export const ProductDetail = ({ onBack }) => {
                     </p>
                   </div>
                 </div>
-                {owner.bio && (
+                {owner.email && (
                   <div className="text-gray-300 text-sm italic">
-                    {owner.bio}
+                    {owner.email}
                   </div>
                 )}
                 <div className="grid grid-cols-2 gap-4 pt-4 border-t border-white/10">
                   <div className="text-center">
                     <div className="text-emerald-400 font-bold text-base sm:text-lg">
-                      {owner.response_rate}%
+                      {owner.phone}
                     </div>
-                    <div className="text-gray-400 text-sm">Response Rate</div>
+                    <div className="text-gray-400 text-sm">Phone Number</div>
                   </div>
                   <div className="text-center">
                     <div className="text-emerald-400 font-bold text-base sm:text-lg">
-                      {owner.response_time}
+                      {owner.address}
                     </div>
-                    <div className="text-gray-400 text-sm">Response Time</div>
+                    <div className="text-gray-400 text-sm">Address</div>
                   </div>
                 </div>
-                <Button variant="secondary" className="w-full">
+                <Button
+                  variant="secondary"
+                  className="w-full"
+                  onClick={() => navigate(`/owner-profile/${owner.id}`)}
+                >
                   <MessageSquare className="w-4 h-4" />
-                  Contact Owner
+                  View Owner Profile
                 </Button>
               </div>
             </Card>
@@ -390,7 +456,6 @@ export const ProductDetail = ({ onBack }) => {
                     </div>
                   </div>
                 </div>
-
                 {/* Date Selection */}
                 <div className="space-y-4">
                   <div>
@@ -431,7 +496,6 @@ export const ProductDetail = ({ onBack }) => {
                     />
                   </div>
                 </div>
-
                 {/* Price Breakdown */}
                 {calculateDays() > 0 && (
                   <div className="space-y-2 pt-4 border-t border-white/10">
@@ -451,7 +515,6 @@ export const ProductDetail = ({ onBack }) => {
                     </div>
                   </div>
                 )}
-
                 <Button
                   variant="primary"
                   className="w-full"
@@ -460,6 +523,7 @@ export const ProductDetail = ({ onBack }) => {
                     !selectedDates.end ||
                     product.availability !== "Available"
                   }
+                  onClick={handleBookNow}
                 >
                   {product.availability === "Available"
                     ? "Book Now"
