@@ -24,6 +24,9 @@ import { Support } from "./components/Support";
 import NotFound from "./components/NotFound";
 import ProductDetailWrapper from "./helper/ProductsDetailWrapper";
 import Loader from "./components/ui/Loader";
+import BookingSummary from "./components/booking/BookingSummary";
+import OwnerProfileDetailOwner from "./components/profile/OwnerProfileDetail";
+import ProfilePage from "./components/profile/ProfilePage";
 
 const AppRoutes = () => {
   const isLoading = true;
@@ -59,8 +62,20 @@ const AppRoutes = () => {
           }
         />
         <Route
+          path="/owner-profile/:id"
+          element={<OwnerProfileDetailOwner />}
+        />
+        <Route
           path="/signin"
           element={<SignIn onSwitchToSignUp={() => navigate("/signup")} />}
+        />
+        <Route
+          path="/booking-summary"
+          element={
+            <PrivateRoute>
+              <BookingSummary />
+            </PrivateRoute>
+          }
         />
         <Route
           path="/signup"
@@ -73,6 +88,14 @@ const AppRoutes = () => {
           element={
             <PrivateRoute>
               <UserDashboard />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/profile"
+          element={
+            <PrivateRoute>
+              <ProfilePage />
             </PrivateRoute>
           }
         />
