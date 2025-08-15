@@ -219,7 +219,7 @@ const cancelBooking = asyncHandler(async (req, res) => {
   });
 
   res.json({
-    message: `Booking cancelled. ${refundAmount} refunded to user from admin wallet.`
+    message: `Booking cancelled. ${refundAmount} refunded to user from admin wallet.`,
   });
 });
 
@@ -415,6 +415,29 @@ const updateBookingStatus = asyncHandler(async (req, res) => {
     message: `Booking status updated to ${status}`,
     penaltyMessage: resPenaltyMessage,
     booking,
+  });
+});
+
+//@desc    Get bookings details by booking id that includes renter, owner, and item details
+// @route   GET /api/bookings/details/:id
+// @access  Private
+const getBookingDetails = asyncHandler(async (req, res) => {
+  const booking = await Booking.findById(req.params.id)
+    .populate("user", "name email")
+    .populate("item")
+    .populate({
+      path: "item",
+      populate: { path: "owner", select: "name email" },
+    });
+  if (!booking) {
+    res.status(404);
+    throw new Error("Booking not found");
+  }
+  res.json({
+    booking,
+    renter: booking.user,
+    owner: booking.item.owner,
+    item: booking.item,
   });
 });
 
