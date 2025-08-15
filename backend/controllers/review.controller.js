@@ -67,4 +67,22 @@ const getMyReviews = asyncHandler(async (req, res) => {
   res.json(reviews);
 });
 
-export { createReview, getReviewsForOwner, getMyReviews };
+//@desc    sum all reviews for an owner and return the avarage rating and total reviews of the owner
+//@route   GET /api/reviews/owner/:ownerId/summary
+//@access  Public
+const getOwnerReviewSummary = asyncHandler(async (req, res) => {
+  const reviews = await Review.find({ owner: req.params.ownerId });
+
+  if (!reviews.length) {
+    return res.json({ totalReviews: 0, averageRating: 0 });
+  }
+
+  const totalReviews = reviews.length;
+  const averageRating = (
+    reviews.reduce((acc, review) => acc + review.rating, 0) / totalReviews
+  ).toFixed(2);
+
+  res.json({ totalReviews, averageRating });
+});
+
+export { createReview, getReviewsForOwner, getMyReviews, getOwnerReviewSummary };
