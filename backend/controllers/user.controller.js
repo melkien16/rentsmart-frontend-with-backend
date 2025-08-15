@@ -20,6 +20,7 @@ const authUser = asyncHandler(async (req, res) => {
       email: user.email,
       address: user.address,
       isAdmin: user.isAdmin,
+      isPremium: user.isPremium,
       avatar: user.avatar,
     });
   } else {
@@ -64,6 +65,7 @@ const registerUser = asyncHandler(async (req, res) => {
       email: user.email,
       address: user.address,
       isAdmin: user.isAdmin,
+      isPremium: user.isPremium,
       avatar: user.avatar,
     });
   } else {
@@ -171,6 +173,22 @@ const getUserById = asyncHandler(async (req, res) => {
   }
 });
 
+// @desc    Get user by id for public view
+// @route  GET /api/users/public/:id
+// @access  Public
+const getUserPublicById = asyncHandler(async (req, res) => {
+  // also add id name, email, phone, address, avatar, isPremium, verification, createdAt
+  const user = await User.findById(req.params.id).select(
+    "name email phone address avatar isPremium verification createdAt _id"
+  );
+  if (user) {
+    res.status(200).json(user);
+  } else {
+    res.status(404);
+    throw new Error("User not found");
+  }
+});
+
 // @desc    Delete user
 // @route  DELETE /api/users/:id
 // @access  Private/Admin
@@ -230,4 +248,5 @@ export {
   getUserById,
   deleteUser,
   updateUser,
+  getUserPublicById,
 };

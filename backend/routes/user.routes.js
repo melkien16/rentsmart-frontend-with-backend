@@ -9,6 +9,7 @@ import {
   getUserById,
   deleteUser,
   updateUser,
+  getUserPublicById,
 } from "../controllers/user.controller.js";
 import { protect, admin } from "../middleware/authMiddleware.js";
 
@@ -23,6 +24,9 @@ router
   .put(protect, updateUserProfile);
 
 router.route("/").post(registerUser).get(protect, admin, getUsers);
+
+// /api/users/public/:id
+router.get("/public/:id", getUserPublicById);
 
 // PUT these after all the specific ones
 router
