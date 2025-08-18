@@ -27,6 +27,7 @@ import Loader from "./components/ui/Loader";
 import BookingSummary from "./components/booking/BookingSummary";
 import OwnerProfileDetailOwner from "./components/profile/OwnerProfileDetail";
 import ProfilePage from "./components/profile/ProfilePage";
+import AddNewItem from "./components/ListItems";
 
 const AppRoutes = () => {
   const isLoading = true;
@@ -88,6 +89,14 @@ const AppRoutes = () => {
           element={
             <PrivateRoute>
               <UserDashboard />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/list-item"
+          element={
+            <PrivateRoute>
+              <AddNewItem />
             </PrivateRoute>
           }
         />
