@@ -9,6 +9,7 @@ const reviewsApiSlice = apiSlice.injectEndpoints({
         method: "POST",
         body: reviewData, // Assuming reviewData contains all necessary fields
       }),
+      invalidatesTags: ["Review", "Item", "User", "Booking"],
     }),
     getReviewsForOwner: builder.query({
       query: (ownerId) => ({
@@ -21,6 +22,7 @@ const reviewsApiSlice = apiSlice.injectEndpoints({
         url: `${REVIEWS_URL}/my`,
         method: "GET",
       }),
+      providesTags: ["Review", "User", "Booking", "Item"],
     }),
     getOwnerReviewSummary: builder.query({
       query: (ownerId) => ({

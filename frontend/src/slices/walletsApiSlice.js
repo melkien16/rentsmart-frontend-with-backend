@@ -9,6 +9,7 @@ const walletApiSlice = apiSlice.injectEndpoints({
         url: `${WALLETS_URL}/${id}`,
         method: "GET",
       }),
+      providedTags: ["Wallet", "User", "Booking"],
     }),
   }),
 });

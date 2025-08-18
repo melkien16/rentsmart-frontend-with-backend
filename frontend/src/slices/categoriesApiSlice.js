@@ -8,6 +8,7 @@ const categoryApiSlice = apiSlice.injectEndpoints({
         url: `${CATEGORIES_URL}`,
         method: "GET",
       }),
+      providesTags: ["Category", "Item", "User", "Booking", "Review", "Notification"],
     }),
   }),
 });

@@ -8,15 +8,35 @@ const productApiSlice = apiSlice.injectEndpoints({
         url: `${PRODUCTS_URL}`,
         method: "GET",
       }),
+      providesTags: [
+        "Item",
+        "Category",
+        "User",
+        "Booking",
+        "Review",
+        "Notification",
+      ],
     }),
-    //fetch product by id
     getProductById: builder.query({
       query: (id) => ({
         url: `${PRODUCTS_URL}/${id}`,
         method: "GET",
       }),
     }),
+    uploadImage: builder.mutation({
+      query: (formData) => ({
+        url: "/api/upload",
+        method: "POST",
+        body: formData,
+      }),
+      invalidatesTags: ["Item", "User", "Booking", "Review", "Notification"],
+    }),
   }),
 });
 
-export const { useGetProductsQuery, useGetProductByIdQuery } = productApiSlice;
+
+export const {
+  useGetProductsQuery,
+  useGetProductByIdQuery,
+  useUploadImageMutation,
+} = productApiSlice;
