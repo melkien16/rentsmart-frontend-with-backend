@@ -46,7 +46,6 @@ const bookingSchema = new mongoose.Schema(
         "pending",
         "confirmed",
         "in_use",
-        "returned",
         "completed",
         "cancelled",
       ],
@@ -69,7 +68,7 @@ const bookingSchema = new mongoose.Schema(
       default: null,
     },
     returnCode: {
-      type: String, // store as 6-digit string
+      type: String, // store as 8-digit string
     },
     returnCodeEnteredAt: {
       type: Date,

@@ -28,6 +28,10 @@ const itemSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
+    availableQuantity: {
+      type: Number,
+      default: 1,
+    },
     rating: {
       type: Number,
       default: 0,
@@ -64,6 +68,10 @@ const itemSchema = new mongoose.Schema(
         type: String,
       },
     ],
+    tags: {
+      type: [String],
+      default: [],
+    },
   },
   {
     timestamps: true,
@@ -73,5 +81,3 @@ const itemSchema = new mongoose.Schema(
 const Item = mongoose.model("Item", itemSchema);
 
 export default Item;
-
-

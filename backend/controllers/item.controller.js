@@ -1,12 +1,54 @@
 import asyncHandler from "../middleware/asyncHandler.js";
 import Item from "../models/itemModel.js";
+import Category from "../models/categoryModel.js";
 
-// @desc    Fetch all items (no filters)
+// @desc    Fetch all items with optional pagination, search, category, tags, and filters
 // @route   GET /api/items
 // @access  Public
 const getItems = asyncHandler(async (req, res) => {
-  const items = await Item.find({}).populate("owner", "name email");
-  res.json(items);
+  const page = Number(req.query.page) || 1; // default to page 1
+  const limit = Number(req.query.limit) || 10; // default 10 items per page
+  const search = req.query.search || "";
+  const minPrice = req.query.minPrice ? Number(req.query.minPrice) : 0;
+  const maxPrice = req.query.maxPrice
+    ? Number(req.query.maxPrice)
+    : Number.MAX_SAFE_INTEGER;
+  const availability = req.query.availability; // e.g., "Available"
+  const category = req.query.category; // optional
+  const tags = req.query.tags ? req.query.tags.split(",") : [];
+
+  // Build dynamic query object
+  const query = {};
+
+  if (search) {
+    query.name = { $regex: search, $options: "i" };
+  }
+
+  if (minPrice || maxPrice !== Number.MAX_SAFE_INTEGER) {
+    query.price = { $gte: minPrice, $lte: maxPrice };
+  }
+
+  if (availability) query.availability = availability;
+  if (category) query.category = category;
+  if (tags.length > 0) query.tags = { $all: tags };
+
+  const totalItems = await Item.countDocuments(query);
+
+  const items = await Item.find(query)
+    .populate(
+      "owner",
+      "name email avatar phone address isPremium isVerified createdAt"
+    )
+    .skip((page - 1) * limit)
+    .limit(limit)
+    .sort({ createdAt: -1 });
+
+  res.json({
+    items,
+    page,
+    totalPages: Math.ceil(totalItems / limit),
+    totalItems,
+  });
 });
 
 // @desc    Fetch single item
@@ -15,7 +57,7 @@ const getItems = asyncHandler(async (req, res) => {
 const getItemById = asyncHandler(async (req, res) => {
   const item = await Item.findById(req.params.id).populate(
     "owner",
-    "name email"
+    "name email avatar, phone, address, isPremium, isVerified, createdAt"
   );
 
   if (item) {
@@ -36,14 +78,14 @@ const createItem = asyncHandler(async (req, res) => {
     price,
     priceUnit,
     value,
-    rating,
-    reviews,
+    availableQuantity,
     location,
     availability,
     images,
     category,
     features,
     rules,
+    tags,
   } = req.body;
 
   const item = new Item({
@@ -52,16 +94,25 @@ const createItem = asyncHandler(async (req, res) => {
     price,
     priceUnit,
     value,
-    rating,
-    reviews,
+    availableQuantity,
     location,
     availability,
     images,
     category,
     features,
     rules,
-    owner: req.user._id, // from auth middleware
+    owner: req.user._id,
+    tags,
   });
+
+  // add the itms quantity to the category's total quantity
+  if (category) {
+    const categoryItem = await Category.findOne({ name: category });
+    if (categoryItem) {
+      categoryItem.count += availableQuantity;
+      await categoryItem.save();
+    }
+  }
 
   const createdItem = await item.save();
   res.status(201).json(createdItem);
@@ -84,6 +135,8 @@ const updateItem = asyncHandler(async (req, res) => {
     category,
     features,
     rules,
+    tags,
+    availableQuantity,
   } = req.body;
 
   const item = await Item.findById(req.params.id);
@@ -101,6 +154,8 @@ const updateItem = asyncHandler(async (req, res) => {
     item.category = category || item.category;
     item.features = features || item.features;
     item.rules = rules || item.rules;
+    item.tags = tags || item.tags;
+    item.availableQuantity = availableQuantity || item.availableQuantity;
 
     const updatedItem = await item.save();
     res.json(updatedItem);
@@ -125,10 +180,4 @@ const deleteItem = asyncHandler(async (req, res) => {
   }
 });
 
-export {
-  getItems,
-  getItemById,
-  createItem,
-  updateItem,
-  deleteItem,
-};
+export { getItems, getItemById, createItem, updateItem, deleteItem };
