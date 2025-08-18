@@ -9,6 +9,14 @@ const userApiSlice = apiSlice.injectEndpoints({
         method: "POST",
         body: data,
       }),
+      invalidatesTags: [
+        "User",
+        "Wallet",
+        "Booking",
+        "Review",
+        "Notification",
+        "Item",
+      ],
     }),
     register: builder.mutation({
       query: (data) => ({
@@ -16,12 +24,28 @@ const userApiSlice = apiSlice.injectEndpoints({
         method: "POST",
         body: data,
       }),
+      invalidatesTags: [
+        "User",
+        "Wallet",
+        "Booking",
+        "Review",
+        "Notification",
+        "Item",
+      ],
     }),
     logout: builder.mutation({
       query: () => ({
         url: `${USERS_URL}/logout`,
         method: "POST",
       }),
+      invalidatesTags: [
+        "User",
+        "Wallet",
+        "Booking",
+        "Review",
+        "Notification",
+        "Item",
+      ],
     }),
     getUserPublicById: builder.query({
       query: (id) => ({
@@ -32,5 +56,9 @@ const userApiSlice = apiSlice.injectEndpoints({
   }),
 });
 
-export const { useLoginMutation, useLogoutMutation, useRegisterMutation, useGetUserPublicByIdQuery } =
-  userApiSlice;
+export const {
+  useLoginMutation,
+  useLogoutMutation,
+  useRegisterMutation,
+  useGetUserPublicByIdQuery,
+} = userApiSlice;
