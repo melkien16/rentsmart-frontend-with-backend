@@ -7,13 +7,9 @@ import Loader from "./ui/Loader";
 
 export const FeaturedRentals = () => {
   const navigate = useNavigate();
-  let { data: products, isLoading, error } = useGetProductsQuery();
+  let { data: productsObject, isLoading, error } = useGetProductsQuery();
 
-  if (isLoading) return <Loader />;
-  if (error) return <div className="text-red-500">Error loading products</div>;
-  if (!products || products.length === 0) {
-    return <div className="text-gray-500">No featured rentals available</div>;
-  }
+  let products = productsObject?.items || [];
 
   // fetch only 4 products for featured rentals
   if (products && products.length > 4) {
@@ -33,6 +29,16 @@ export const FeaturedRentals = () => {
             right now
           </p>
         </div>
+
+        {/* Loader */}
+        {isLoading && <Loader />}
+
+        {/* Error Handling */}
+        {error && (
+          <div className="text-red-500 text-3xl text-center flex items-center justify-center">
+            <p>Failed to load featured rentals. Please try again later.</p>
+          </div>
+        )}
 
         {/* Featured Items Grid - Mobile optimized */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-6">
@@ -110,7 +116,6 @@ export const FeaturedRentals = () => {
           ))}
         </div>
 
-        {/* View All Button */}
         <div className="text-center mt-10 sm:mt-12">
           <button
             className="px-6 sm:px-8 py-3 bg-white/5 border border-white/20 text-white rounded-xl hover:bg-white/10 transition-all duration-300 font-medium text-sm sm:text-base w-full sm:w-auto"

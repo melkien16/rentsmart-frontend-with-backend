@@ -75,7 +75,6 @@ export const SignUp = () => {
       // Fetch wallet info after registration
       const walletData = await getWalletByUserId(res._id).unwrap();
       dispatch(setWalletInfo(walletData));
-      toast.success("Registration successful!");
       dispatch(setCredentials({ ...res }));
       navigate(redirect);
     } catch (err) {

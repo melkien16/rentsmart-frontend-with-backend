@@ -16,10 +16,20 @@ import {
   HelpCircle,
   TrendingUp,
   Shield,
+  User,
 } from "lucide-react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faRProject } from "@fortawesome/free-brands-svg-icons";
 import { Button } from "./ui/Button";
 import { logout } from "../slices/authSlice";
 import { useLogoutMutation } from "../slices/usersApiSlice";
+import {
+  useGetNotificationsQuery,
+  useMarkNotificationReadMutation,
+} from "../slices/notificationsApiSlice";
+
+import NotificationModal from "./ui/NotificationModal";
+import formatTimeAgo from "../helper/formatTimeAgo";
 
 export const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -30,6 +40,10 @@ export const Navbar = () => {
   const [searchFocused, setSearchFocused] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
   const [recordingTime, setRecordingTime] = useState(0);
+  const { data: notifications = [] } = useGetNotificationsQuery();
+  const [markNotificationRead] = useMarkNotificationReadMutation();
+  const [selectedNotification, setSelectedNotification] = useState(null);
+
   const userMenuRef = useRef(null);
   const notificationsRef = useRef(null);
   const recordingIntervalRef = useRef(null);
@@ -40,35 +54,7 @@ export const Navbar = () => {
   const [logoutApi] = useLogoutMutation();
   const dispatch = useDispatch();
 
-  // Mock notifications data
-  const notifications = [
-    {
-      id: 1,
-      type: "rental",
-      message: "Your camera rental ends in 2 hours",
-      time: "2 min ago",
-      read: false,
-      icon: Camera,
-    },
-    {
-      id: 2,
-      type: "payment",
-      message: "Payment received for DJI Drone rental",
-      time: "1 hour ago",
-      read: true,
-      icon: Shield,
-    },
-    {
-      id: 3,
-      type: "promotion",
-      message: "20% off on all construction tools this week",
-      time: "3 hours ago",
-      read: false,
-      icon: TrendingUp,
-    },
-  ];
-
-  const unreadCount = notifications.filter((n) => !n.read).length;
+  const unreadCount = notifications?.filter((n) => !n.isRead).length;
 
   useEffect(() => {
     const handleScroll = () => {
@@ -110,15 +96,16 @@ export const Navbar = () => {
       await logoutApi().unwrap();
       navigate("/");
       dispatch(logout());
-    } catch (error) {
-      console.error("Logout failed:", error);
-    }
+    } catch (error) {}
+  };
+  const handleProfile = async () => {
+    setIsUserMenuOpen(false);
+    navigate("/profile");
   };
 
   const handleSearch = (e) => {
     e.preventDefault();
     if (searchQuery.trim()) {
-      // Navigate to search results or browse with query
       navigate(`/items?search=${encodeURIComponent(searchQuery)}`);
     }
   };
@@ -134,7 +121,7 @@ export const Navbar = () => {
     setTimeout(() => {
       stopRecording();
       setSearchQuery("camera equipment");
-    }, 3000);
+    }, 30000);
   };
 
   const stopRecording = () => {
@@ -157,6 +144,19 @@ export const Navbar = () => {
     { name: "Support", link: "/support", icon: HelpCircle },
   ];
 
+  const handleOpenNotification = async (notif) => {
+    setSelectedNotification(notif);
+
+    // Only mark as read if it's not already read
+    if (!notif.isRead) {
+      try {
+        await markNotificationRead(notif._id).unwrap();
+      } catch (err) {
+        console.error("Failed to mark as read:", err);
+      }
+    }
+  };
+
   return (
     <nav
       className={`fixed top-0 w-full z-50 transition-all duration-500 ${
@@ -174,7 +174,12 @@ export const Navbar = () => {
           >
             <div className="relative">
               <div className="w-12 h-12 bg-gradient-to-br from-emerald-400 via-blue-400 to-purple-400 rounded-2xl flex items-center justify-center shadow-lg group-hover:shadow-emerald-400/25 transition-all duration-300 group-hover:scale-110">
-                <Zap className="w-7 h-7 text-black" />
+                <FontAwesomeIcon
+                  icon={faRProject}
+                  bounce
+                  size="lg"
+                  style={{ color: "#000000" }}
+                />
               </div>
               <div className="absolute -top-1 -right-1 w-4 h-4 bg-emerald-400 rounded-full animate-pulse"></div>
             </div>
@@ -349,19 +354,20 @@ export const Navbar = () => {
                     <div className="max-h-64 overflow-y-auto">
                       {notifications.map((notification) => (
                         <div
-                          key={notification.id}
-                          className={`p-4 border-b border-white/5 hover:bg-white/5 transition-colors cursor-pointer ${
-                            !notification.read ? "bg-emerald-400/5" : ""
-                          }`}
+                          key={notification._id}
+                          onClick={() => handleOpenNotification(notification)}
+                          className={`p-4 rounded-lg border border-white/10 cursor-pointer transition ${
+                            notification.isRead ? "bg-gray-700" : "bg-gray-900"
+                          }   hover:border-white/20`}
                         >
                           <div className="flex items-start space-x-3">
-                            <notification.icon className="w-5 h-5 text-emerald-400 mt-0.5" />
+                            <TrendingUp className="w-5 h-5 text-emerald-400 mt-0.5" />
                             <div className="flex-1">
                               <p className="text-white text-sm font-medium">
                                 {notification.message}
                               </p>
                               <p className="text-gray-400 text-xs mt-1">
-                                {notification.time}
+                                {formatTimeAgo(notification.createdAt)}
                               </p>
                             </div>
                             {!notification.read && (
@@ -374,6 +380,12 @@ export const Navbar = () => {
                   </div>
                 )}
               </div>
+            )}
+            {selectedNotification && (
+              <NotificationModal
+                notification={selectedNotification}
+                onClose={() => setSelectedNotification(null)}
+              />
             )}
 
             {/* Authentication Section */}
@@ -442,6 +454,13 @@ export const Navbar = () => {
                       >
                         <LayoutDashboard className="w-5 h-5" />
                         <span>Dashboard</span>
+                      </button>
+                      <button
+                        onClick={handleProfile}
+                        className="w-full flex items-center space-x-3 px-4 py-3 text-gray-300 hover:text-red-400 hover:bg-red-400/10 transition-all duration-200"
+                      >
+                        <User className="w-5 h-5" />
+                        <span>Profile</span>
                       </button>
 
                       <button
@@ -535,6 +554,16 @@ export const Navbar = () => {
                   >
                     <LayoutDashboard className="w-4 h-4" />
                     <span>Dashboard</span>
+                  </button>
+                  <button
+                    onClick={() => {
+                      handleProfile();
+                      setIsMobileMenuOpen(false);
+                    }}
+                    className="w-full text-left px-3 py-2 text-gray-300 hover:text-red-400 transition-colors flex items-center space-x-2"
+                  >
+                    <User className="w-4 h-4" />
+                    <span>Profile</span>
                   </button>
 
                   <button

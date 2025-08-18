@@ -26,10 +26,6 @@ import { useGetBookingForOwnerQuery } from "../../../slices/bookingsApiSlice";
 export const UserOverview = () => {
   const { userWalletInfo } = useSelector((state) => state.wallet); // ✅ updated field name
   const { data: bookings = [], isLoading } = useGetBookingForOwnerQuery();
-  console.log("booking: ",bookings);
-
-  console.log(userWalletInfo)
-
   // Format currency
   const formatCurrency = (amount) =>
     amount?.toLocaleString("en-US", { style: "currency", currency: "USD" });

@@ -16,8 +16,8 @@ export const Categories = () => {
   ];
 
   const { data: categoriesData, isLoading, error } = useGetCategoryQuery();
-  if (isLoading) return <Loader />;
-  if (error) return <div>Error loading categories</div>;
+  // if (isLoading) return <Loader />;
+  if (error) return <div>Error loading categories {error}</div>;
   if (!categoriesData || categoriesData.length === 0) {
     return (
       <div className="text-center text-gray-500">No categories available</div>

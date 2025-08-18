@@ -46,7 +46,6 @@ export const SignIn = () => {
       const walletData = await getWalletByUserId(res._id).unwrap();
       dispatch(setWalletInfo(walletData));
 
-      toast.success("Login successful");
       navigate(redirect || "/user");
     } catch (err) {
       toast.error(err?.data?.message || err.error || "Login failed");
