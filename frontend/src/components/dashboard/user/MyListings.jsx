@@ -1,5 +1,6 @@
 import { mockListings } from "../mockUserData";
 import { useState } from "react";
+import {useNavigate} from "react-router-dom";
 import {
   Package,
   TrendingUp,
@@ -16,6 +17,8 @@ const MyListings = () => {
   const [selectedListing, setSelectedListing] = useState(null);
   const [viewMode, setViewMode] = useState("grid");
   const [filter, setFilter] = useState("all");
+
+  const navigate = useNavigate();
 
   const filteredListings = mockListings.filter(
     (listing) => filter === "all" || listing.status === filter
@@ -78,7 +81,10 @@ const MyListings = () => {
               <option value="active">Active</option>
               <option value="inactive">Inactive</option>
             </select>
-            <button className="px-6 py-2 bg-emerald-400 text-black rounded-xl hover:bg-emerald-500 transition-all duration-200 flex items-center gap-2 font-semibold">
+            <button className="px-6 py-2 bg-emerald-400 text-black rounded-xl hover:bg-emerald-500 transition-all duration-200 flex items-center gap-2 font-semibold"
+              // instead of opening a modal, just navigate to a /listings/new page with a redirect
+              onClick={() => navigate("/list-item")}
+            >
               <Plus className="w-4 h-4" />
               Add Listing
             </button>
