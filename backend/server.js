@@ -13,6 +13,7 @@ import ReportRouter from "./routes/report.routes.js";
 import ReviewRouter from "./routes/review.routes.js";
 import CategoryRouter from "./routes/category.routes.js";
 import NotificationRouter from "./routes/notification.routes.js";
+import UploadRouter from "./routes/upload.routes.js";
 import { notFound, errorHandler } from "./middleware/errorMiddleware.js";
 
 import connectDb from "./config/db.js";
@@ -40,6 +41,30 @@ app.use("/api/reports", ReportRouter);
 app.use("/api/reviews", ReviewRouter);
 app.use("/api/categories", CategoryRouter);
 app.use("/api/notifications", NotificationRouter);
+app.use("/api/upload", UploadRouter);
+
+// Production-specific configuration
+if (process.env.NODE_ENV === "production") {
+  const __dirname = path.resolve();
+
+  // Serve static frontend files from frontend/dist
+  app.use(express.static(path.resolve(__dirname, "frontend", "dist")));
+
+  // Serve uploads folder for static assets
+  app.use("/uploads", express.static(path.resolve(__dirname, "Uploads")));
+
+  app.get(/^(?!\/api|\/uploads).*/, (req, res, next) => {
+    res.sendFile(
+      path.resolve(__dirname, "frontend", "dist", "index.html"),
+      (err) => {
+        if (err) {
+          console.error(`Error serving index.html: ${err.message}`);
+          next(err);
+        }
+      }
+    );
+  });
+}
 
 // Error Handling Middleware
 app.use(notFound);

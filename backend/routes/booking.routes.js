@@ -13,7 +13,7 @@ import { protect, admin } from "../middleware/authMiddleware.js";
 const router = express.Router();
 
 // Bookings by user
-router.route("/user/:userId").get(protect, getBookingsByUser);
+router.route("/user").get(protect, getBookingsByUser);
 
 // Bookings for owner
 router.route("/owner").get(protect, getBookingsForOwner);
