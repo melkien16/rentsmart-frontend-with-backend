@@ -21,24 +21,23 @@ import {
   HelpCircle,
 } from "lucide-react";
 
-export const Sidebar = ({
-  activeSection,
-  onSectionChange,
-}) => {
+export const Sidebar = ({ activeSection, onSectionChange }) => {
   const { userInfo } = useSelector((state) => state.auth);
 
   const userMenuItems = [
     { id: "overview", label: "Dashboard", icon: LayoutDashboard },
     { id: "rentals", label: "My Rentals", icon: Package },
     { id: "listings", label: "My Listings", icon: Package },
-    { id: "add-item", label: "Add New Products", icon: Plus },
-    { id: "earnings", label: "Earnings", icon: DollarSign },
-    { id: "wallet", label: "Wallet & Deposit", icon: Wallet },
+    // { id: "add-item", label: "Add New Products", icon: Plus },
+    { id: "rental-requests", label: "Rental Requests", icon: Calendar },
+    // { id: "earnings", label: "Earnings", icon: DollarSign },
+    { id: "wallet", label: "Wallet", icon: Wallet },
     { id: "collateral", label: "Collateral", icon: Shield },
-    { id: "subscription", label: "Premium", icon: Crown },
+    { id: "subscription", label: "Subscription", icon: Crown },
     { id: "favorites", label: "Favorites", icon: Heart },
     { id: "messages", label: "Messages", icon: MessageSquare },
     { id: "reviews", label: "Reviews", icon: Star },
+    { id: "verification-status", label: "Verification Status", icon: Shield },
     { id: "support", label: "Report Problem", icon: AlertTriangle },
     { id: "settings", label: "Account Settings", icon: Settings },
   ];

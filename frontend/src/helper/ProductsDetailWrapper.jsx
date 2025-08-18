@@ -9,8 +9,9 @@ const ProductDetailWrapper = () => {
   const navigate = useNavigate();
 
   // Fetch products using the API slice
-  const { data: products, isLoading, error } = useGetProductsQuery();
-  const product = products?.find((p) => p._id === id);
+  const { data: productsObject, isLoading, error } = useGetProductsQuery();
+
+  const product = productsObject?.items?.find((p) => p._id === id);
 
   useEffect(() => {
     if (!isLoading && !product) {

@@ -17,6 +17,7 @@ import Reviews from "./user/Reviews";
 import Messages from "./user/Messages";
 import Support from "./user/Support";
 import AccountSettings from "./user/AccountSettings";
+import MyRentalRequests from "./user/MyRentalRequest";
 
 export const UserDashboard = () => {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
@@ -57,6 +58,8 @@ export const UserDashboard = () => {
         return <MyRentals />;
       case "listings":
         return <MyListings />;
+      case "rental-requests":
+        return <MyRentalRequests />;
       case "collateral":
         return <MyCollaterals />;
       case "add-item":
