@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
+import { format } from "date-fns";
 import { useNavigate } from "react-router-dom";
 import {
   Calendar,
@@ -19,10 +20,12 @@ import PaySuccessModal from "../ui/paySuccessModal";
 
 import { useCreateBookingMutation } from "../../slices/bookingsApiSlice";
 import { useLazyGetWalletByUserIdQuery } from "../../slices/walletsApiSlice";
+import { useGetOwnerReviewSummaryQuery } from "../../slices/reviewsApiSlice";
 import { setWalletInfo } from "../../slices/walletSlice";
 import { clearBooking } from "../../slices/bookingSlice";
 
 export const BookingSummary = ({ owner }) => {
+  //totalReviews, averageRating
   const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
   const { userInfo } = useSelector((state) => state.auth);
   const { booking } = useSelector((state) => state.booking);
@@ -33,6 +36,9 @@ export const BookingSummary = ({ owner }) => {
 
   const [createBooking, { isLoading, error }] = useCreateBookingMutation();
   const [getWalletByUserId] = useLazyGetWalletByUserIdQuery();
+  const { data: ownerReviewSummary } = useGetOwnerReviewSummaryQuery(
+    booking?.ownerId
+  );
 
   const calculateDays = () => {
     if (!booking?.startDate || !booking?.endDate) return 0;
@@ -113,12 +119,14 @@ export const BookingSummary = ({ owner }) => {
                   <div>
                     <p className="text-gray-400 text-sm">Start Date</p>
                     <p className="text-white font-medium">
-                      {booking?.startDate}
+                      {format(new Date(booking.startDate), "MMM d, yyyy")}
                     </p>
                   </div>
                   <div>
                     <p className="text-gray-400 text-sm">End Date</p>
-                    <p className="text-white font-medium">{booking?.endDate}</p>
+                    <p className="text-white font-medium">
+                      {format(new Date(booking.startDate), "MMM d, yyyy")}
+                    </p>
                   </div>
                 </div>
                 <div className="flex items-center space-x-2 pt-2 border-t border-white/10">
@@ -153,10 +161,10 @@ export const BookingSummary = ({ owner }) => {
                     <div className="flex items-center space-x-1 text-yellow-400">
                       <Star className="w-3 h-3 fill-current" />
                       <span className="text-white text-sm">
-                        {booking?.rating || "4.9"}
+                        {ownerReviewSummary?.averageRating || "0"}
                       </span>
                       <span className="text-gray-400 text-sm">
-                        ({booking?.reviews || "500"} reviews)
+                        ({ownerReviewSummary?.totalReviews || "0"} reviews)
                       </span>
                     </div>
                   </div>
