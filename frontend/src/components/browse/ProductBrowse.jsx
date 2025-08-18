@@ -41,7 +41,8 @@ export const ProductBrowse = () => {
 
   const { data: categoriesData, isLoading: categoriesLoading } =
     useGetCategoryQuery();
-  const { data: products, isLoading: productsLoading } = useGetProductsQuery();
+  const { data: productsObject, isLoading: productsLoading } =
+    useGetProductsQuery();
 
   if (categoriesLoading || productsLoading) return <Loader />;
 
@@ -50,6 +51,16 @@ export const ProductBrowse = () => {
       <div className="text-center text-gray-500">No categories available</div>
     );
   }
+  if (
+    !productsObject ||
+    !productsObject.items ||
+    productsObject.items.length === 0
+  ) {
+    return (
+      <div className="text-center text-gray-500">No products available</div>
+    );
+  }
+  const products = productsObject.items;
 
   const mockProducts = products || [];
   const categories = categoriesData.map((cat) => cat.name);
@@ -205,7 +216,7 @@ export const ProductBrowse = () => {
                 className="fixed inset-0 bg-black/50 z-40 lg:hidden"
                 onClick={() => setShowFilters(false)}
               />
-              <Card className="fixed inset-x-4 top-4 bottom-4 z-50 lg:relative lg:inset-auto lg:z-auto p-4 lg:p-6 lg:sticky lg:top-8 overflow-y-auto">
+              <Card className="fixed inset-x-4 top-4 bottom-4 z-50 lg:inset-auto lg:z-auto p-4 lg:p-6 lg:sticky lg:top-8 overflow-y-auto">
                 {/* Mobile Close Button */}
                 <button
                   onClick={() => setShowFilters(false)}

@@ -165,6 +165,7 @@ export const ProductDetail = ({ onBack }) => {
       endDate: selectedDates.end,
       category: product.category,
       ownerName: owner.name,
+      ownerId: owner.id,
       rating: product.rating,
       reviews: product.reviews,
       avatar: owner.avatar,
