@@ -23,6 +23,13 @@ const productApiSlice = apiSlice.injectEndpoints({
         method: "GET",
       }),
     }),
+    getProductsByUserId: builder.query({
+      query: (userId) => ({
+        url: `${PRODUCTS_URL}/user/${userId}`,
+        method: "GET",
+      }),
+      providesTags: ["Item", "Category", "User"],
+    }),
     uploadImage: builder.mutation({
       query: (formData) => ({
         url: "/api/upload",
@@ -31,12 +38,45 @@ const productApiSlice = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ["Item", "User", "Booking", "Review", "Notification"],
     }),
+    // for creating a new product
+    createProduct: builder.mutation({
+      query: (productData) => ({
+        url: PRODUCTS_URL,
+        method: "POST",
+        body: productData,
+      }),
+      invalidatesTags: [
+        "Item",
+        "Category",
+        "User",
+        "Booking",
+        "Review",
+        "Notification",
+      ],
+    }),
+    // update for views /:id/views
+    incrementItemViews: builder.mutation({
+      query: (id) => ({
+        url: `${PRODUCTS_URL}/${id}/views`,
+        method: "PATCH",
+      }),
+      invalidatesTags: [
+        "Item",
+        "Category",
+        "User",
+        "Booking",
+        "Review",
+        "Notification",
+      ],
+    }),
   }),
 });
-
 
 export const {
   useGetProductsQuery,
   useGetProductByIdQuery,
   useUploadImageMutation,
+  useCreateProductMutation,
+  useGetProductsByUserIdQuery,
+  useIncrementItemViewsMutation,
 } = productApiSlice;

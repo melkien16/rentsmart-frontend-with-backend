@@ -11,7 +11,11 @@ import {
 } from "lucide-react";
 import { toast } from "react-toastify";
 
-import { useUploadImageMutation } from "../slices/productsApiSlice";
+import {
+  useUploadImageMutation,
+  useCreateProductMutation,
+} from "../slices/productsApiSlice";
+import { validateFormData } from "../helper/validateForm";
 
 const AddNewItem = () => {
   const [currentStep, setCurrentStep] = useState(1);
@@ -31,6 +35,8 @@ const AddNewItem = () => {
     quantity: "",
   });
   const [uploadImage, { isLoading }] = useUploadImageMutation();
+  const [createProduct, { isLoading: isCreateLoad }] =
+    useCreateProductMutation();
 
   const totalSteps = 5;
   const progress = (currentStep / totalSteps) * 100;
@@ -123,7 +129,50 @@ const AddNewItem = () => {
   };
 
   const handleSubmit = async () => {
-   console.log("Submitting form data:", formData);
+    const isValid = validateFormData(formData, setCurrentStep);
+    if (!isValid) return;
+    try {
+      const productData = {
+        title: formData.title,
+        description: formData.description,
+        price: formData.price,
+        priceUnit: formData.priceUnit,
+        value: formData.expectedValue,
+        availableQuantity: formData.quantity,
+        location: formData.location,
+        availability: formData.availability,
+        images: formData.images,
+        category: formData.category,
+        features: formData.features.filter((f) => f.trim() !== ""),
+        rules: formData.rules.filter((r) => r.trim() !== ""),
+        tags: formData.tags.filter((t) => t.trim() !== ""),
+      };
+
+      console.log("Submitting product data:", productData);
+      console.log("Form data:", formData);
+
+      await createProduct(productData).unwrap();
+      toast.success("Item created successfully!");
+      setFormData({
+        title: "",
+        description: "",
+        price: "",
+        priceUnit: "day",
+        category: "",
+        location: "",
+        images: [],
+        features: [""],
+        rules: [""],
+        tags: [""],
+        expectedValue: "",
+        availability: "Available",
+        quantity: "",
+      });
+      setCurrentStep(1);
+    } catch (error) {
+      toast.error("Failed to create item. Please try again.");
+      console.error("Create item error:", error);
+    }
   };
 
   const renderStep = () => {
@@ -148,18 +197,20 @@ const AddNewItem = () => {
                 Category *
               </label>
               <select
-                value={formData.category}
+                defaultValue="Electronics"
                 onChange={(e) => handleInputChange("category", e.target.value)}
                 className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:border-emerald-400 focus:bg-black/60 transition-colors"
               >
-                <option value="electronics">Electronics</option>
-                <option value="sports">Sports & Outdoor</option>
-                <option value="tools">Tools & Equipment</option>
-                <option value="vehicles">Vehicles</option>
-                <option value="furniture">Furniture</option>
-                <option value="clothing">Clothing & Accessories</option>
-                <option value="books">Books & Media</option>
-                <option value="other">Other</option>
+                <option value="Electronics">Electronics</option>
+                <option value="Sports & Outdoors">Sports & Outdoor</option>
+                <option value="Tools & Equipments">Tools & Equipment</option>
+                <option value="Vehicles">Vehicles</option>
+                <option value="Furniture">Furniture</option>
+                <option value="Clothing & Accessories">
+                  Clothing & Accessories
+                </option>
+                <option value="Books & Media">Books & Media</option>
+                <option value="Others">Other</option>
               </select>
             </div>
             <div>
@@ -200,13 +251,15 @@ const AddNewItem = () => {
                   Price Unit *
                 </label>
                 <select
-                  value={formData.priceUnit}
+                  defaultValue={"day"}
                   onChange={(e) =>
                     handleInputChange("priceUnit", e.target.value)
                   }
                   className="w-full px-4 py-3 bg-gray-900 border border-white/20 rounded-xl text-white focus:outline-none focus:border-emerald-400 focus:bg-gray-800 transition-colors"
                 >
-                  <option value="day">Per Day</option>
+                  <option value="day" selected>
+                    Per Day
+                  </option>
                   <option value="week">Per Week</option>
                   <option value="month">Per Month</option>
                 </select>
@@ -218,7 +271,7 @@ const AddNewItem = () => {
                   Quantity *
                 </label>
                 <input
-                  type="text"
+                  type="number"
                   value={formData.quantity}
                   onChange={(e) =>
                     handleInputChange("quantity", e.target.value)
@@ -232,7 +285,7 @@ const AddNewItem = () => {
                   Expected Value *
                 </label>
                 <input
-                  type="text"
+                  type="number"
                   value={formData.expectedValue}
                   onChange={(e) =>
                     handleInputChange("expectedValue", e.target.value)
@@ -265,14 +318,15 @@ const AddNewItem = () => {
                 Availability
               </label>
               <select
-                value={formData.availability}
+              defaultValue={"Available"}
                 onChange={(e) =>
                   handleInputChange("availability", e.target.value)
                 }
                 className="w-full px-4 py-3 bg-gray-900 border border-white/20 rounded-xl text-white focus:outline-none focus:border-emerald-400 focus:bg-gray-800 transition-colors"
               >
-                <option value="Now">Available Now</option>
-                <option value="Next Soon">Available Soon</option>
+                <option value="Available" selected>Available Now</option>
+                <option value="Available Soon">Available Soon</option>
+                <option value="Rented">Currently Rented</option>
               </select>
             </div>
           </div>
