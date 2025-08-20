@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useGetProductsQuery } from "../../slices/productsApiSlice";
 import Loader from "../ui/Loader";
+import Rating from "../../helper/Ratings";
 import { useGetCategoryQuery } from "../../slices/categoriesApiSlice";
 
 import {
@@ -103,7 +104,7 @@ export const ProductBrowse = () => {
       filters.status.length === 0 ||
       filters.status
         .map((s) => s.toLowerCase())
-        .includes(product.availability.toLowerCase());
+        .includes(product.status.toLowerCase());
 
     const matchesLocation =
       !filters.location ||
@@ -445,14 +446,14 @@ export const ProductBrowse = () => {
                       <div className="absolute top-3 left-3">
                         <span
                           className={`px-2 py-1 text-xs font-medium rounded-full ${
-                            product.availability === "Now"
+                            product.status === "Available"
                               ? "bg-emerald-400/20 text-emerald-400 border border-emerald-400/30"
-                              : product.availability === "Rented"
+                              : product.status === "Rented"
                               ? "bg-red-400/20 text-red-400 border border-red-400/30"
                               : "bg-orange-400/20 text-orange-400 border border-orange-400/30"
                           }`}
                         >
-                          {product.availability}
+                          {product.status}
                         </span>
                       </div>
                       <div className="absolute top-3 right-3">
@@ -479,8 +480,9 @@ export const ProductBrowse = () => {
 
                       <div className="flex items-center justify-between text-sm">
                         <div className="flex items-center space-x-1 text-yellow-400">
-                          <Star className="w-4 h-4 fill-current" />
-                          <span className="text-white">{product.rating}</span>
+                          <span className="text-white">
+                            <Rating value={product.rating} showValue={false} />
+                          </span>
                           <span className="text-gray-400 hidden sm:inline">
                             ({product.reviews})
                           </span>
@@ -537,14 +539,14 @@ export const ProductBrowse = () => {
                         <div className="absolute top-2 left-2">
                           <span
                             className={`px-2 py-1 text-xs font-medium rounded-full ${
-                              product.availability === "Now"
+                              product.status === "Available"
                                 ? "bg-emerald-400/20 text-emerald-400 border border-emerald-400/30"
-                                : product.availability === "Rented"
+                                : product.status === "Rented"
                                 ? "bg-red-400/20 text-red-400 border border-red-400/30"
                                 : "bg-orange-400/20 text-orange-400 border border-orange-400/30"
                             }`}
                           >
-                            {product.availability}
+                            {product.status}
                           </span>
                         </div>
                       </div>
@@ -570,10 +572,10 @@ export const ProductBrowse = () => {
                         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 sm:gap-0">
                           <div className="flex items-center space-x-2 sm:space-x-4">
                             <div className="flex items-center space-x-1 text-yellow-400">
-                              <Star className="w-4 h-4 fill-current" />
-                              <span className="text-white">
-                                {product.rating}
-                              </span>
+                              <Rating
+                                value={product.rating}
+                                showValue={false}
+                              />
                               <span className="text-gray-400">
                                 ({product.reviews})
                               </span>

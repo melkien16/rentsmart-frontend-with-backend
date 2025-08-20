@@ -19,8 +19,12 @@ import {
 import { Card } from "../ui/Card";
 import { Button } from "../ui/Button";
 import { toast } from "react-toastify";
-import { useGetProductByIdQuery } from "../../slices/productsApiSlice";
+import {
+  useGetProductByIdQuery,
+  useIncrementItemViewsMutation,
+} from "../../slices/productsApiSlice";
 import Loader from "../ui/Loader";
+import Rating from "../../helper/Ratings";
 
 import { useGetUserPublicByIdQuery } from "../../slices/usersApiSlice";
 import { useGetOwnerReviewSummaryQuery } from "../../slices/reviewsApiSlice";
@@ -42,6 +46,15 @@ export const ProductDetail = ({ onBack }) => {
   const { userInfo } = useSelector((state) => state.auth);
 
   const { data: product, isLoading, error } = useGetProductByIdQuery(id);
+  const [incrementItemViews, { data: increamentData, error: incErr }] =
+    useIncrementItemViewsMutation();
+
+  // Increment views when product data is loaded
+  useEffect(() => {
+    if (product) {
+      incrementItemViews(id);
+    }
+  }, [product, id, incrementItemViews]);
 
   // Conditional queries for owner data
   const { data: ownerPublicData } = useGetUserPublicByIdQuery(
@@ -309,9 +322,8 @@ export const ProductDetail = ({ onBack }) => {
                       {product.category}
                     </span>
                     <div className="flex items-center space-x-1 text-yellow-400">
-                      <Star className="w-5 h-5 fill-current" />
                       <span className="text-white font-bold">
-                        {product.rating}
+                        <Rating value={product.rating} showValue={false} />
                       </span>
                       <span className="text-gray-400">
                         ({product.reviews} reviews)
@@ -328,7 +340,7 @@ export const ProductDetail = ({ onBack }) => {
                     </div>
                     <div className="flex items-center space-x-1">
                       <Calendar className="w-4 h-4" />
-                      <span>Available: {product.availability}</span>
+                      <span>Available: {product.status}</span>
                     </div>
                   </div>
                 </div>
@@ -395,8 +407,7 @@ export const ProductDetail = ({ onBack }) => {
                       )}
                     </div>
                     <div className="flex items-center space-x-1 text-yellow-400 mb-1">
-                      <Star className="w-4 h-4 fill-current" />
-                      <span className="text-white">{owner.rating}</span>
+                      <Rating value={owner.rating} showValue={false} />
                       <span className="text-gray-400 text-sm">
                         ({owner.reviews} reviews)
                       </span>
@@ -472,7 +483,7 @@ export const ProductDetail = ({ onBack }) => {
                           start: e.target.value,
                         }))
                       }
-                      className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-xl text-white focus:outline-none focus:border-emerald-400 focus:ring-1 focus:ring-emerald-400"
+                      className="w-full px-4 py-3 bg-white/20 border border-white/25 rounded-xl text-white focus:outline-none focus:border-emerald-400 focus:ring-1 focus:ring-emerald-400"
                       min={new Date().toISOString().split("T")[0]}
                     />
                   </div>
@@ -489,7 +500,7 @@ export const ProductDetail = ({ onBack }) => {
                           end: e.target.value,
                         }))
                       }
-                      className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-xl text-white focus:outline-none focus:border-emerald-400 focus:ring-1 focus:ring-emerald-400"
+                      className="w-full px-4 py-3 bg-white/20 border border-white/25 rounded-xl text-white focus:outline-none focus:border-emerald-400 focus:ring-1 focus:ring-emerald-400"
                       min={
                         selectedDates.start ||
                         new Date().toISOString().split("T")[0]
@@ -522,11 +533,11 @@ export const ProductDetail = ({ onBack }) => {
                   disabled={
                     !selectedDates.start ||
                     !selectedDates.end ||
-                    product.availability !== "Available"
+                    product.status !== "Available"
                   }
                   onClick={handleBookNow}
                 >
-                  {product.availability === "Available"
+                  {product.status === "Available"
                     ? "Book Now"
                     : "Currently Unavailable"}
                 </Button>
