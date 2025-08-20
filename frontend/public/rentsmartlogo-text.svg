@@ -1,0 +1,50 @@
+<!-- RentSmart Lockup (icon + wordmark) -->
+<svg width="680" height="180" viewBox="0 0 680 180" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">RentSmart Logo</title>
+  <desc id="desc">Neon icon with futuristic wordmark</desc>
+
+  <defs>
+    <linearGradient id="g-neon" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#00FF99"/>
+      <stop offset="100%" stop-color="#48FFC2"/>
+    </linearGradient>
+    <filter id="f-glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="5" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Background (optional) -->
+  <rect width="680" height="180" rx="24" fill="#0B0F13"/>
+
+  <!-- Icon (same motif, simplified size) -->
+  <g transform="translate(24,20)" filter="url(#f-glow)">
+    <path d="M66 0 132 38v76L66 152 0 114V38L66 0Z"
+          fill="rgba(0,255,153,0.06)" stroke="url(#g-neon)" stroke-width="2.6"/>
+    <!-- R -->
+    <path d="M36 48h28c12 0 19 7 19 16s-7 16-19 16h-14l20 22"
+          stroke="url(#g-neon)" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+    <!-- S -->
+    <path d="M104 60c0-7-7-13-20-13-10 0-17 3-21 7m0 44c4 4 11 7 21 7 13 0 20-6 20-13"
+          stroke="url(#g-neon)" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+
+  <!-- Wordmark -->
+  <g transform="translate(200, 52)">
+    <!-- Use your web font (Orbitron/Montserrat) in CSS where you embed this;
+         this SVG uses a generic futuristic look with strokes + glow -->
+    <text x="0" y="36" font-size="40" font-weight="700"
+          font-family="Montserrat, Orbitron, system-ui, -apple-system, Segoe UI, Roboto, sans-serif"
+          fill="url(#g-neon)" filter="url(#f-glow)" letter-spacing="0.5">
+      RentSmart
+    </text>
+    <text x="2" y="70" font-size="14" font-weight="500"
+          font-family="Montserrat, Orbitron, system-ui, -apple-system, Segoe UI, Roboto, sans-serif"
+          fill="#A3B0B8" letter-spacing="1.2">
+      Rent • List • Earn • Return
+    </text>
+  </g>
+</svg>

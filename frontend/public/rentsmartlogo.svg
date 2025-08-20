@@ -1,0 +1,47 @@
+<!-- RentSmart Monogram Icon -->
+<svg width="256" height="256" viewBox="0 0 256 256" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">RentSmart Monogram</title>
+  <desc id="desc">Neon hexagon with stylized RS and soft glow</desc>
+
+  <defs>
+    <!-- Brand colors -->
+    <linearGradient id="g-neon" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#00FF99"/>
+      <stop offset="100%" stop-color="#48FFC2"/>
+    </linearGradient>
+
+    <!-- Outer glow -->
+    <filter id="f-glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="6" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <!-- Inner glass gradient -->
+    <linearGradient id="g-glass" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="rgba(255,255,255,0.12)"/>
+      <stop offset="100%" stop-color="rgba(255,255,255,0.02)"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Dark backdrop (remove if placing on your own background) -->
+  <rect width="256" height="256" rx="32" fill="#0B0F13"/>
+
+  <!-- Hex frame -->
+  <g filter="url(#f-glow)">
+    <path d="M128 20 216 72v112l-88 52-88-52V72l88-52Z"
+          fill="rgba(0,255,153,0.06)" stroke="url(#g-neon)" stroke-width="3"/>
+    <path d="M128 34 204 78v100l-76 44-76-44V78l76-44Z"
+          fill="url(#g-glass)" stroke="rgba(255,255,255,0.08)" stroke-width="1.25"/>
+  </g>
+
+  <!-- Stylized R -->
+  <path d="M92 88h38c16 0 26 10 26 24s-10 24-26 24h-18l28 32"
+        stroke="url(#g-neon)" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" filter="url(#f-glow)"/>
+
+  <!-- Stylized S -->
+  <path d="M170 104c0-10-9-18-28-18-14 0-24 4-30 10m0 64c6 6 16 10 30 10 19 0 28-8 28-18"
+        stroke="url(#g-neon)" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" filter="url(#f-glow)"/>
+</svg>

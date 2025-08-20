@@ -1,0 +1,32 @@
+<!-- RentSmart Circular Badge -->
+<svg width="256" height="256" viewBox="0 0 256 256" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">RentSmart Circular Badge</title>
+  <desc id="desc">Neon circular emblem with stylized R, orbital ring and spark</desc>
+  <defs>
+    <linearGradient id="neo" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#00FF99"/>
+      <stop offset="100%" stop-color="#35F7B2"/>
+    </linearGradient>
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="6" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <!-- background (remove if not needed) -->
+  <!-- <rect width="256" height="256" rx="32" fill="#0B0F13"/> -->
+
+  <!-- outer ring -->
+  <circle cx="128" cy="128" r="86" stroke="url(#neo)" stroke-width="3" fill="rgba(0,255,153,0.05)" filter="url(#glow)"/>
+
+  <!-- orbit ring -->
+  <ellipse cx="128" cy="128" rx="100" ry="46" transform="rotate(-18 128 128)"
+           stroke="rgba(0,255,153,0.25)" stroke-width="2" fill="none" />
+
+  <!-- spark -->
+  <circle cx="198" cy="106" r="5" fill="url(#neo)" filter="url(#glow)"/>
+
+  <!-- stylized R -->
+  <path d="M92 92h42c16 0 26 10 26 22s-10 22-26 22h-20l36 36"
+        stroke="url(#neo)" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" filter="url(#glow)"/>
+</svg>
