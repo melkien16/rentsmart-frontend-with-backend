@@ -1,16 +1,16 @@
 import mongoose from "mongoose";
 
-const messageSchema = mongoose.Schema(
+const messageSchema = new mongoose.Schema(
   {
     sender: {
       type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
       required: true,
-      ref: "User", // Reference to the sender (User model)
     },
     receiver: {
       type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
       required: true,
-      ref: "User", // Reference to the receiver (User model)
     },
     message: {
       type: String,
@@ -18,18 +18,21 @@ const messageSchema = mongoose.Schema(
     },
     isRead: {
       type: Boolean,
-      default: false, // Whether the message has been read or not
+      default: false,
     },
-    createdAt: {
+    readAt: {
       type: Date,
-      default: Date.now,
+    },
+    isDelivered: {
+      type: Boolean,
+      default: false,
+    },
+    deliveredAt: {
+      type: Date,
     },
   },
-  {
-    timestamps: true, // Will create 'createdAt' and 'updatedAt' fields automatically
-  }
+  { timestamps: true }
 );
 
 const Message = mongoose.model("Message", messageSchema);
-
 export default Message;
