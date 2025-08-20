@@ -53,14 +53,9 @@ export const Footer = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 lg:gap-12">
           {/* Logo and Description */}
           <div className="sm:col-span-2 lg:col-span-1">
-            <div className="flex items-center space-x-2 mb-4 sm:mb-6">
-              <div className="w-6 h-6 sm:w-8 sm:h-8 lg:w-10 lg:h-10 bg-gradient-to-br from-emerald-400 to-emerald-500 rounded-xl flex items-center justify-center">
-                <Zap className="w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6 text-black" />
-              </div>
-              <span className="text-lg sm:text-xl lg:text-2xl font-bold text-white">
-                RentSmart
-              </span>
-            </div>
+            <a href="/" className="flex items-center space-x-2 mb-4 sm:mb-6">
+              <img src="/withWordMark.svg" alt="" className="w-full h-32" />
+            </a>
             <p className="text-gray-300 leading-relaxed mb-4 sm:mb-6 text-xs sm:text-sm lg:text-base">
               The future of tool rental. Access professional equipment instantly
               with our smart rental platform.

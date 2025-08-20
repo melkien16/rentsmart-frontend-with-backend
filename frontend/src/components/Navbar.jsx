@@ -4,7 +4,6 @@ import { useNavigate, Link } from "react-router-dom";
 import {
   Menu,
   X,
-  Zap,
   Search,
   Mic,
   LogOut,
@@ -12,14 +11,10 @@ import {
   Bell,
   ChevronDown,
   Home,
-  Camera,
   HelpCircle,
   TrendingUp,
-  Shield,
   User,
 } from "lucide-react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faRProject } from "@fortawesome/free-brands-svg-icons";
 import { Button } from "./ui/Button";
 import { logout } from "../slices/authSlice";
 import { useLogoutMutation } from "../slices/usersApiSlice";
@@ -173,13 +168,8 @@ export const Navbar = () => {
             onClick={() => navigate("/")}
           >
             <div className="relative">
-              <div className="w-12 h-12 bg-gradient-to-br from-emerald-400 via-blue-400 to-purple-400 rounded-2xl flex items-center justify-center shadow-lg group-hover:shadow-emerald-400/25 transition-all duration-300 group-hover:scale-110">
-                <FontAwesomeIcon
-                  icon={faRProject}
-                  bounce
-                  size="lg"
-                  style={{ color: "#000000" }}
-                />
+              <div className="rounded-full flex items-center justify-center shadow-lg group-hover:shadow-emerald-400/25 transition-all duration-300">
+                <img src="/withBack.svg" alt="" className="w-20 h-20" />
               </div>
               <div className="absolute -top-1 -right-1 w-4 h-4 bg-emerald-400 rounded-full animate-pulse"></div>
             </div>

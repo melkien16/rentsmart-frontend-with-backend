@@ -1,6 +1,6 @@
-import { mockListings } from "../mockUserData";
 import { useState } from "react";
-import {useNavigate} from "react-router-dom";
+import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import {
   Package,
   TrendingUp,
@@ -13,14 +13,45 @@ import {
   Plus,
 } from "lucide-react";
 
+import Rating from "../../../helper/Ratings"
+
+import { useGetProductsByUserIdQuery } from "../../../slices/productsApiSlice";
+
+const mockListings = [
+  {
+    id: "listing1",
+    title: "Professional Camera",
+    category: "Electronics",
+    description: "High-quality professional camera for events and photography",
+    price: 50,
+    qauntity: 1,
+    priceUnit: "day",
+    images: ["/images/camera.jpg", "/images/camera2.jpg"],
+    status: "active",
+    views: 245,
+    inquiries: 12,
+    bookings: 8,
+    rating: 4.8,
+    reviews: 15,
+    location: "New York, NY",
+    availability: "Now",
+    createdAt: "2024-01-15",
+    tags: ["Professional", "Events", "Photography"],
+  },
+];
+
 const MyListings = () => {
   const [selectedListing, setSelectedListing] = useState(null);
   const [viewMode, setViewMode] = useState("grid");
   const [filter, setFilter] = useState("all");
 
   const navigate = useNavigate();
+  const { userInfo } = useSelector((state) => state.auth);
+  const { data: listings = [] } = useGetProductsByUserIdQuery(userInfo._id);
 
-  const filteredListings = mockListings.filter(
+  console.log("data", listings)
+
+  const filteredListings = listings?.filter(
     (listing) => filter === "all" || listing.status === filter
   );
 
@@ -75,13 +106,15 @@ const MyListings = () => {
             <select
               value={filter}
               onChange={(e) => setFilter(e.target.value)}
-              className="px-4 py-2 rounded-xl bg-white/10 border border-white/20 text-white focus:outline-none focus:border-emerald-400"
+              className="px-4 py-2 rounded-xl bg-white/70 border border-white/80 text-white focus:outline-none focus:border-emerald-400"
             >
               <option value="all">All Listings</option>
-              <option value="active">Active</option>
-              <option value="inactive">Inactive</option>
+              <option value="Available">Active</option>
+              <option value="Available Soon">Inactive</option>
+              <option value="Rented">Inactive</option>
             </select>
-            <button className="px-6 py-2 bg-emerald-400 text-black rounded-xl hover:bg-emerald-500 transition-all duration-200 flex items-center gap-2 font-semibold"
+            <button
+              className="px-6 py-2 bg-emerald-400 text-black rounded-xl hover:bg-emerald-500 transition-all duration-200 flex items-center gap-2 font-semibold"
               // instead of opening a modal, just navigate to a /listings/new page with a redirect
               onClick={() => navigate("/list-item")}
             >
@@ -101,7 +134,7 @@ const MyListings = () => {
                 Total Listings
               </p>
               <p className="text-3xl font-bold text-white">
-                {mockListings.length}
+                {listings.length}
               </p>
               <p className="text-emerald-400 text-sm flex items-center gap-1">
                 <Package className="w-4 h-4" />
@@ -121,7 +154,7 @@ const MyListings = () => {
                 Active Listings
               </p>
               <p className="text-3xl font-bold text-white">
-                {mockListings.filter((l) => l.status === "active").length}
+                {listings.filter((l) => l.status === "Available").length}
               </p>
               <p className="text-green-400 text-sm flex items-center gap-1">
                 <TrendingUp className="w-4 h-4" />
@@ -139,7 +172,7 @@ const MyListings = () => {
             <div>
               <p className="text-blue-400 text-sm font-medium">Total Views</p>
               <p className="text-3xl font-bold text-white">
-                {mockListings.reduce((sum, l) => sum + l.views, 0)}
+                {listings.reduce((sum, l) => sum + l.views, 0)}
               </p>
               <p className="text-blue-400 text-sm flex items-center gap-1">
                 <Eye className="w-4 h-4" />
@@ -159,7 +192,7 @@ const MyListings = () => {
                 Total Bookings
               </p>
               <p className="text-3xl font-bold text-white">
-                {mockListings.reduce((sum, l) => sum + l.bookings, 0)}
+                {listings.reduce((sum, l) => sum + l.bookings, 0)}
               </p>
               <p className="text-purple-400 text-sm flex items-center gap-1">
                 <Calendar className="w-4 h-4" />
@@ -180,7 +213,7 @@ const MyListings = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {filteredListings.map((listing) => (
                 <div
-                  key={listing.id}
+                  key={listing._id}
                   className="bg-white/5 rounded-2xl border border-white/10 p-6 hover:border-emerald-400/30 transition-all duration-300 cursor-pointer group"
                   onClick={() => setSelectedListing(listing)}
                 >
@@ -232,8 +265,7 @@ const MyListings = () => {
                     <div className="flex items-center justify-between text-sm">
                       <span className="text-gray-400">Rating</span>
                       <div className="flex items-center gap-1">
-                        <Star className="w-4 h-4 text-yellow-400 fill-current" />
-                        <span className="text-white">{listing.rating}</span>
+                        <Rating value={listing.rating} showValue={false} />
                         <span className="text-gray-400">
                           ({listing.reviews})
                         </span>
@@ -273,7 +305,7 @@ const MyListings = () => {
                       }}
                       className="flex-1 px-3 py-2 bg-blue-400 text-white rounded-lg hover:bg-blue-500 transition-colors text-sm font-medium"
                     >
-                      {listing.status === "active" ? "Deactivate" : "Activate"}
+                      {listing.status === "Available" ? "Rented" : "Available"}
                     </button>
                   </div>
                 </div>
@@ -283,7 +315,7 @@ const MyListings = () => {
             <div className="space-y-4">
               {filteredListings.map((listing) => (
                 <div
-                  key={listing.id}
+                  key={listing._id}
                   className="bg-white/5 rounded-2xl border border-white/10 p-6 hover:border-emerald-400/30 transition-all duration-300 cursor-pointer group"
                   onClick={() => setSelectedListing(listing)}
                 >
@@ -392,14 +424,6 @@ const MyListings = () => {
                     <label className="text-gray-400 text-sm">Created</label>
                     <p className="text-gray-300">{selectedListing.createdAt}</p>
                   </div>
-                  <div>
-                    <label className="text-gray-400 text-sm">
-                      Availability
-                    </label>
-                    <p className="text-emerald-400">
-                      {selectedListing.availability}
-                    </p>
-                  </div>
                 </div>
               </div>
 
@@ -414,9 +438,9 @@ const MyListings = () => {
                 </div>
                 <div className="bg-white/5 rounded-xl p-4">
                   <div className="text-center">
-                    <p className="text-gray-400 text-sm">Inquiries</p>
+                    <p className="text-gray-400 text-sm">Expected Value Price</p>
                     <p className="text-white font-bold text-2xl">
-                      {selectedListing.inquiries}
+                      {selectedListing.value}
                     </p>
                   </div>
                 </div>

@@ -124,29 +124,29 @@ const ProfilePage = ({ onAddListing }) => {
         {/* Verification */}
         <div className="mt-8 flex flex-wrap gap-4 bg-white/10 py-8 border border-white/20 rounded-lg px-6">
           {user.emailVerified ? (
-            <span className="badge-verified">
+            <span className="flex items-center gap-2 bg-emerald-400/20 border border-emerald-400/40 text-emerald-400 px-4 py-2 rounded-full">
               <ShieldCheck size={18} /> Email Verified
             </span>
           ) : (
-            <span className="badge-notverified">
+            <span className="flex items-center gap-2 bg-red-500/20 border border-red-500/40 text-red-500 px-4 py-2 rounded-full">
               <ShieldX size={18} /> Email Not Verified
             </span>
           )}
           {user.phoneVerified ? (
-            <span className="badge-verified">
+            <span className="flex items-center gap-2 bg-emerald-400/20 border border-emerald-400/40 text-emerald-400 px-4 py-2 rounded-full">
               <ShieldCheck size={18} /> Phone Verified
             </span>
           ) : (
-            <span className="badge-notverified">
+            <span className="flex items-center gap-2 bg-red-500/20 border border-red-500/40 text-red-500 px-4 py-2 rounded-full">
               <ShieldX size={18} /> Phone Not Verified
             </span>
           )}
           {user.idVerified ? (
-            <span className="badge-verified">
+            <span className="flex items-center gap-2 bg-emerald-400/20 border border-emerald-400/40 text-emerald-400 px-4 py-2 rounded-full">
               <ShieldCheck size={18} /> ID Verified
             </span>
           ) : (
-            <span className="badge-notverified">
+            <span className="flex items-center gap-2 bg-red-500/20 border border-red-500/40 text-red-500 px-4 py-2 rounded-full">
               <ShieldX size={18} /> ID Not Verified
             </span>
           )}
@@ -184,30 +184,6 @@ const ProfilePage = ({ onAddListing }) => {
           {activeTab === "Settings" && <SettingsPanel />}
         </div>
       </div>
-
-      {/* Styles for badges */}
-      <style jsx>{`
-        .badge-verified {
-          display: flex;
-          align-items: center;
-          gap: 0.5rem;
-          background: rgba(0, 255, 153, 0.2);
-          border: 1px solid rgba(0, 255, 153, 0.4);
-          color: #00ff99;
-          padding: 0.5rem 1rem;
-          border-radius: 9999px;
-        }
-        .badge-notverified {
-          display: flex;
-          align-items: center;
-          gap: 0.5rem;
-          background: rgba(239, 68, 68, 0.2);
-          border: 1px solid rgba(239, 68, 68, 0.4);
-          color: #ef4444;
-          padding: 0.5rem 1rem;
-          border-radius: 9999px;
-        }
-      `}</style>
     </div>
   );
 };

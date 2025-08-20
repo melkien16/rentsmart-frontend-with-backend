@@ -8,18 +8,18 @@ export const Button = ({
   icon: Icon,
   className = "",
   onClick,
-  disabled ,
+  disabled,
 }) => {
   const baseClasses =
     "inline-flex items-center justify-center font-bold rounded-xl transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-900";
 
   const variants = {
     primary:
-      "bg-gradient-to-r from-emerald-400 to-emerald-500 text-black hover:from-emerald-300 hover:to-emerald-400 shadow-lg hover:shadow-emerald-400/25 focus:ring-emerald-400",
+      "bg-gradient-to-r from-emerald-400 to-emerald-500 text-black hover:from-emerald-300 hover:to-emerald-400 shadow-lg hover:shadow-emerald-400/25 focus:ring-emerald-400 disabled:from-gray-400 disabled:to-gray-500 disabled:text-gray-200 disabled:shadow-none",
     secondary:
-      "bg-white/10 text-white border border-white/20 hover:bg-white/20 backdrop-blur-sm shadow-lg hover:shadow-white/10 focus:ring-white/20",
+      "bg-white/10 text-white border border-white/20 hover:bg-white/20 backdrop-blur-sm shadow-lg hover:shadow-white/10 focus:ring-white/20 disabled:bg-white/5 disabled:text-gray-400 disabled:border-gray-600 disabled:shadow-none",
     ghost:
-      "text-emerald-400 hover:text-emerald-300 hover:bg-emerald-400/10 focus:ring-emerald-400/20",
+      "text-emerald-400 hover:text-emerald-300 hover:bg-emerald-400/10 focus:ring-emerald-400/20 disabled:text-gray-500 disabled:hover:bg-transparent",
   };
 
   const sizes = {

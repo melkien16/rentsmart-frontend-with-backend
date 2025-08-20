@@ -62,17 +62,18 @@ export const Sidebar = ({ activeSection, onSectionChange }) => {
     <div className="h-full bg-black/90 backdrop-blur-md border-r border-white/10 transition-all duration-300 z-40 flex flex-col">
       {/* Header */}
       <div className="p-3 sm:p-4 border-b border-white/10 flex-shrink-0">
-        <div className="flex items-center justify-between">
-          <Link to={"/"} className="flex items-center space-x-2 sm:space-x-3">
-            <div className="w-6 h-6 sm:w-8 sm:h-8 bg-gradient-to-br from-emerald-400 to-emerald-500 rounded-lg flex items-center justify-center">
-              <span className="text-black font-bold text-xs sm:text-sm">
+        <div className="flex items-center justify-between bg-white/5 rounded-xl border border-white/10">
+          <a href="/" className="flex items-center space-x-2 sm:space-x-3">
+            <div className="w-6 h-6 sm:w-8 sm:h-8 md:h-14 md:w-14 rounded-lg flex items-center justify-center">
+              {/* <span className="text-black font-bold text-xs sm:text-sm">
                 RS
-              </span>
+              </span> */}
+              <img src="/withBack.svg" alt="" />
             </div>
-            <span className="text-white font-bold text-sm sm:text-base">
+            <span className="text-white font-bold text-lg sm:text-base">
               RentSmart
             </span>
-          </Link>
+          </a>
         </div>
       </div>
 

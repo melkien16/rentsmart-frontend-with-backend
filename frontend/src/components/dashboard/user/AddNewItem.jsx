@@ -36,7 +36,6 @@ const AddNewItem = () => {
     { id: 5, title: "Images", description: "Upload item photos" },
   ];
 
-
   const handleInputChange = (field, value) => {
     setFormData((prev) => ({
       ...prev,
@@ -122,52 +121,70 @@ const AddNewItem = () => {
           <div className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-          <label className="text-gray-400 text-sm font-medium">
-            Price *
-          </label>
-          <input
-            type="number"
-            value={formData.price}
-            onChange={(e) => handleInputChange("price", e.target.value)}
-            className="w-full px-4 py-3 bg-gray-900 border border-white/20 rounded-xl text-white focus:outline-none focus:border-emerald-400 focus:bg-gray-800 transition-colors"
-            placeholder="60"
-          />
+                <label className="text-gray-400 text-sm font-medium">
+                  Price *
+                </label>
+                <input
+                  type="number"
+                  value={formData.price}
+                  onChange={(e) => handleInputChange("price", e.target.value)}
+                  className="w-full px-4 py-3 bg-gray-900 border border-white/20 rounded-xl text-white focus:outline-none focus:border-emerald-400 focus:bg-gray-800 transition-colors"
+                  placeholder="60"
+                />
               </div>
               <div>
-          <label className="text-gray-400 text-sm font-medium">
-            Price Unit *
-          </label>
-          <select
-            value={formData.priceUnit}
-            onChange={(e) =>
-              handleInputChange("priceUnit", e.target.value)
-            }
-            className="w-full px-4 py-3 bg-gray-900 border border-white/20 rounded-xl text-white focus:outline-none focus:border-emerald-400 focus:bg-gray-800 transition-colors" 
-          >
-            <option value="day">Per Day</option>
-            <option value="week">Per Week</option>
-            <option value="month">Per Month</option>
-          </select>
+                <label className="text-gray-400 text-sm font-medium">
+                  Price Unit *
+                </label>
+                <select
+                  value={formData.priceUnit}
+                  onChange={(e) =>
+                    handleInputChange("priceUnit", e.target.value)
+                  }
+                  className="w-full px-4 py-3 bg-gray-900 border border-white/20 rounded-xl text-white focus:outline-none focus:border-emerald-400 focus:bg-gray-800 transition-colors"
+                >
+                  <option value="day">Per Day</option>
+                  <option value="week">Per Week</option>
+                  <option value="month">Per Month</option>
+                </select>
               </div>
             </div>
-            <div>
-              <label className="text-gray-400 text-sm font-medium">
-          Category *
-              </label>
-              <select
-          value={formData.category}
-          onChange={(e) => handleInputChange("category", e.target.value)}
-          className="w-full px-4 py-3 bg-gray-900 border border-white/20 rounded-xl text-white focus:outline-none focus:border-emerald-400 focus:bg-gray-800 transition-colors"
-              >
-          <option value="electronics">Electronics</option>
-          <option value="sports">Sports & Outdoor</option>
-          <option value="tools">Tools & Equipment</option>
-          <option value="vehicles">Vehicles</option>
-          <option value="furniture">Furniture</option>
-          <option value="clothing">Clothing & Accessories</option>
-          <option value="books">Books & Media</option>
-          <option value="other">Other</option>
-              </select>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label className="text-gray-400 text-sm font-medium">
+                  Category *
+                </label>
+                <select
+                  value={formData.category}
+                  onChange={(e) =>
+                    handleInputChange("category", e.target.value)
+                  }
+                  className="w-full px-4 py-3 bg-gray-900 border border-white/20 rounded-xl text-white focus:outline-none focus:border-emerald-400 focus:bg-gray-800 transition-colors"
+                >
+                  <option value="electronics">Electronics</option>
+                  <option value="sports">Sports & Outdoor</option>
+                  <option value="tools">Tools & Equipment</option>
+                  <option value="vehicles">Vehicles</option>
+                  <option value="furniture">Furniture</option>
+                  <option value="clothing">Clothing & Accessories</option>
+                  <option value="books">Books & Media</option>
+                  <option value="other">Other</option>
+                </select>
+              </div>
+              <div>
+                <label className="text-gray-400 text-sm font-medium">
+                  Expected Value *
+                </label>
+                <input
+                  type="text"
+                  value={formData.expectedValue}
+                  onChange={(e) =>
+                    handleInputChange("expectedValue", e.target.value)
+                  }
+                  className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:border-emerald-400 transition-colors"
+                  placeholder="e.g., $1000"
+                />
+              </div>
             </div>
           </div>
         );

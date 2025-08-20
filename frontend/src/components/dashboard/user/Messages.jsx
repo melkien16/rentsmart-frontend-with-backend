@@ -66,7 +66,7 @@ const Messages = () => {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+      {/* <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         <div className="bg-gradient-to-br from-blue-400/20 to-blue-600/20 rounded-2xl border border-blue-400/30 p-6 hover:scale-105 transition-all duration-300">
           <div className="flex items-center justify-between">
             <div>
@@ -149,7 +149,7 @@ const Messages = () => {
             </div>
           </div>
         </div>
-      </div>
+      </div> */}
 
       {/* Messages Interface */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
