@@ -13,7 +13,7 @@ const getItems = asyncHandler(async (req, res) => {
   const maxPrice = req.query.maxPrice
     ? Number(req.query.maxPrice)
     : Number.MAX_SAFE_INTEGER;
-  const availability = req.query.availability; // e.g., "Available"
+  const status = req.query.status; // e.g., "Available"
   const category = req.query.category; // optional
   const tags = req.query.tags ? req.query.tags.split(",") : [];
 
@@ -28,7 +28,7 @@ const getItems = asyncHandler(async (req, res) => {
     query.price = { $gte: minPrice, $lte: maxPrice };
   }
 
-  if (availability) query.availability = availability;
+  if (status) query.status = status;
   if (category) query.category = category;
   if (tags.length > 0) query.tags = { $all: tags };
 
@@ -49,6 +49,25 @@ const getItems = asyncHandler(async (req, res) => {
     totalPages: Math.ceil(totalItems / limit),
     totalItems,
   });
+});
+
+// @desc    Fetch items by user ID
+// @route   GET /api/items/user/:userId
+// @access  Public
+const getItemsByUserId = asyncHandler(async (req, res) => {
+  const userId = req.params.userId;
+  const items = await Item.find({ owner: userId })
+    .populate(
+      "owner",
+      "name email avatar phone address isPremium isVerified createdAt"
+    )
+    .sort({ createdAt: -1 });
+  if (items.length > 0) {
+    res.json(items);
+  } else {
+    res.status(404);
+    throw new Error("No items found for this user");
+  }
 });
 
 // @desc    Fetch single item
@@ -80,7 +99,7 @@ const createItem = asyncHandler(async (req, res) => {
     value,
     availableQuantity,
     location,
-    availability,
+    status,
     images,
     category,
     features,
@@ -96,7 +115,7 @@ const createItem = asyncHandler(async (req, res) => {
     value,
     availableQuantity,
     location,
-    availability,
+    status,
     images,
     category,
     features,
@@ -112,6 +131,9 @@ const createItem = asyncHandler(async (req, res) => {
       categoryItem.count += availableQuantity;
       await categoryItem.save();
     }
+  } else {
+    res.status(400);
+    throw new Error("Category is required");
   }
 
   const createdItem = await item.save();
@@ -130,7 +152,7 @@ const updateItem = asyncHandler(async (req, res) => {
     rating,
     reviews,
     location,
-    availability,
+    status,
     images,
     category,
     features,
@@ -149,7 +171,7 @@ const updateItem = asyncHandler(async (req, res) => {
     item.rating = rating || item.rating;
     item.reviews = reviews || item.reviews;
     item.location = location || item.location;
-    item.availability = availability || item.availability;
+    item.status = status || item.status;
     item.images = images || item.images;
     item.category = category || item.category;
     item.features = features || item.features;
@@ -157,6 +179,22 @@ const updateItem = asyncHandler(async (req, res) => {
     item.tags = tags || item.tags;
     item.availableQuantity = availableQuantity || item.availableQuantity;
 
+    const updatedItem = await item.save();
+    res.json(updatedItem);
+  } else {
+    res.status(404);
+    throw new Error("Item not found");
+  }
+});
+
+// @desc    Increment item views
+// @route   PUT /api/items/:id/views
+// @access  Public
+const incrementItemViews = asyncHandler(async (req, res) => {
+  const item = await Item.findById(req.params.id);
+
+  if (item) {
+    item.views += 1;
     const updatedItem = await item.save();
     res.json(updatedItem);
   } else {
@@ -180,4 +218,12 @@ const deleteItem = asyncHandler(async (req, res) => {
   }
 });
 
-export { getItems, getItemById, createItem, updateItem, deleteItem };
+export {
+  getItems,
+  getItemById,
+  createItem,
+  updateItem,
+  deleteItem,
+  getItemsByUserId,
+  incrementItemViews,
+};

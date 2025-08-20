@@ -97,7 +97,8 @@ const createBooking = asyncHandler(async (req, res) => {
   });
 
   item.availableQuantity -= quantity;
-  item.availability = item.availableQuantity <= 0 ? "Rented" : "Available";
+  item.bookings += quantity;
+  item.status = item.availableQuantity <= 0 ? "Rented" : "Available";
   await item.save();
 
   // Send notification
@@ -238,7 +239,8 @@ const cancelBooking = asyncHandler(async (req, res) => {
 
   // Restore item availability based on quantity
   item.availableQuantity += quantity;
-  item.availability = item.availableQuantity > 0 ? "Available" : "Rented";
+  item.bookings -= quantity;
+  item.status = item.availableQuantity > 0 ? "Available" : "Rented";
   await item.save();
 
   // Send notification

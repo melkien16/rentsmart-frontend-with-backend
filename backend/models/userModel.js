@@ -37,20 +37,30 @@ const userSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    isOnline: {
+      type: Boolean,
+      default: false,
+    },
+    lastSeen: {
+      type: Date,
+    },
     verification: [
       {
-        verification_type: {
-          type: String,
-          enum: ["email", "phone", "national_id"],
-        },
-        isVerified: {
+        isEmailVerified: {
           type: Boolean,
           default: false,
         },
-        verificationImg: {
-          type: String,
-          default:
-            "https://images.pexels.com/photos/614810/pexels-photo-614810.jpeg?auto=compress&cs=tinysrgb&w=150",
+      },
+      {
+        isPhoneVerified: {
+          type: Boolean,
+          default: false,
+        },
+      },
+      {
+        isIdVerified: {
+          type: Boolean,
+          default: false,
         },
       },
     ],

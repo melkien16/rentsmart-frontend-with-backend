@@ -36,7 +36,15 @@ const itemSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
+    views: {
+      type: Number,
+      default: 0,
+    },
     reviews: {
+      type: Number,
+      default: 0,
+    },
+    bookings: {
       type: Number,
       default: 0,
     },
@@ -44,7 +52,7 @@ const itemSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    availability: {
+    status: {
       type: String,
       default: "Available", // Options: "Available", "Available Soon", "Rented"
     },
