@@ -24,17 +24,117 @@ const sendMessage = asyncHandler(async (req, res) => {
   res.status(201).json(newMessage);
 });
 
-// @desc    Get All recieved messages of a user
+// @desc    Get all conversations (with full messages) of a user
 // @route   GET /api/messages
 // @access  Private
-
 const getAllMessages = asyncHandler(async (req, res) => {
   const userId = req.user._id;
 
-  const messages = await Message.find({ receiver: userId })
-    .populate("sender", "name email")
-    .populate("receiver", "name email")
-    .sort({ createdAt: -1 });
+  const conversations = await Message.aggregate([
+    {
+      $match: {
+        $or: [{ sender: userId }, { receiver: userId }],
+      },
+    },
+    {
+      // normalize sender/receiver to always form the same conversationId
+      $addFields: {
+        conversationId: {
+          $cond: [
+            {
+              $gt: [{ $toString: "$sender" }, { $toString: "$receiver" }],
+            },
+            {
+              $concat: [
+                { $toString: "$receiver" },
+                "_",
+                { $toString: "$sender" },
+              ],
+            },
+            {
+              $concat: [
+                { $toString: "$sender" },
+                "_",
+                { $toString: "$receiver" },
+              ],
+            },
+          ],
+        },
+      },
+    },
+    {
+      $group: {
+        _id: "$conversationId",
+        messages: { $push: "$$ROOT" },
+        lastMessage: { $last: "$$ROOT" },
+      },
+    },
+    {
+      $addFields: {
+        otherUser: {
+          $cond: [
+            { $eq: [{ $arrayElemAt: ["$messages.sender", 0] }, userId] },
+            { $arrayElemAt: ["$messages.receiver", 0] },
+            { $arrayElemAt: ["$messages.sender", 0] },
+          ],
+        },
+      },
+    },
+    {
+      $lookup: {
+        from: "users",
+        localField: "otherUser",
+        foreignField: "_id",
+        as: "otherUser",
+      },
+    },
+    { $unwind: "$otherUser" },
+    {
+      $project: {
+        _id: 0,
+        otherUserInfo: {
+          _id: "$otherUser._id",
+          name: "$otherUser.name",
+          avatar: "$otherUser.avatar",
+          lastSeen: "$otherUser.lastSeen",
+          isOnline: "$otherUser.isOnline",
+        },
+        conversations: "$messages",
+        lastMessageInfo: "$lastMessage",
+        conversationId: "$_id",
+      },
+    },
+    { $sort: { "lastMessageInfo.createdAt": -1 } },
+  ]);
+
+  res.json(conversations);
+});
+
+// @desc    Get messages between two users by conversationId(userId_userId)
+// @route   GET /api/messages/:conversationId
+// @access  Private
+const getConversationById = asyncHandler(async (req, res) => {
+  const userId = req.user._id;
+  const { conversationId } = req.params;
+
+  // Extract the two user IDs from conversationId
+  const [user1, user2] = conversationId.split("_");
+
+  // Make sure the logged-in user is part of this conversation
+  if (userId.toString() !== user1 && userId.toString() !== user2) {
+    res.status(403);
+    throw new Error("You are not part of this conversation");
+  }
+
+  // Fetch all messages between these two users
+  const messages = await Message.find({
+    $or: [
+      { sender: user1, receiver: user2 },
+      { sender: user2, receiver: user1 },
+    ],
+  })
+    .sort({ createdAt: 1 }) // sort by oldest first
+    .select("-__v"); // remove __v if you want
 
   res.json(messages);
 });
@@ -51,17 +151,41 @@ const getMessages = asyncHandler(async (req, res) => {
     throw new Error("Invalid recipient");
   }
 
+  // Pagination params (defaults: page 1, limit 20)
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 20;
+  const skip = (page - 1) * limit;
+
+  // Fetch messages with pagination
   const messages = await Message.find({
     $or: [
       { sender: loggedInUserId, receiver: userId },
       { sender: userId, receiver: loggedInUserId },
     ],
   })
-    .populate("sender", "name email")
-    .populate("receiver", "name email")
-    .sort({ createdAt: 1 });
+    .populate("sender", "name email isOnline avatar")
+    .populate("receiver", "name email isOnline avatar")
+    .sort({ createdAt: 1 })
+    .skip(skip)
+    .limit(limit);
 
-  res.json(messages);
+  // Count total messages in this conversation
+  const totalMessages = await Message.countDocuments({
+    $or: [
+      { sender: loggedInUserId, receiver: userId },
+      { sender: userId, receiver: loggedInUserId },
+    ],
+  });
+
+  res.json({
+    messages,
+    pagination: {
+      total: totalMessages,
+      page,
+      limit,
+      totalPages: Math.ceil(totalMessages / limit),
+    },
+  });
 });
 
 // @desc    Mark a message as read
@@ -117,5 +241,6 @@ export {
   getMessages,
   getAllMessages,
   markMessageAsRead,
+  getConversationById,
   deleteMessage,
 };
