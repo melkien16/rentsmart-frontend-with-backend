@@ -1,8 +1,7 @@
-// chatSocket.js
 import User from "./models/userModel.js";
 import Message from "./models/messageModel.js";
 
-let onlineUsers = new Map(); // userId -> Set(socketIds)
+let onlineUsers = new Map();
 
 const addUserSocket = (userId, socketId) => {
   if (!onlineUsers.has(userId)) {
@@ -28,6 +27,7 @@ const chatSocket = (io) => {
     // User joins after login
     socket.on("join", async (userId) => {
       addUserSocket(userId, socket.id);
+      console.log("User Joined:", userId, socket.id);
 
       if (onlineUsers.get(userId).size === 1) {
         await User.findByIdAndUpdate(userId, { isOnline: true });
