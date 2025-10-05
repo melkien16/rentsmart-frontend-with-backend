@@ -1,0 +1,162 @@
+[
+  {
+    "category": "General Information",
+    "question": "What is the purpose of RentSmart?",
+    "answer": "RentSmart is a platform that allows users to rent everyday tools and items such as cameras, travel bags, watches, and more."
+  },
+  {
+    "category": "General Information",
+    "question": "Who was RentSmart founded by?",
+    "answer": "RentSmart was founded by a group of tech enthusiasts and entrepreneurs who wanted to create a sustainable and cost-effective way for people to access everyday items."
+  },
+  {
+    "category": "General Information",
+    "question": "Who is the owner and CEO of RentSmart?",
+    "answer": "The owner and CEO of RentSmart is Melkie Yilk, a visionary leader with a passion for innovation and customer satisfaction. He has a background in technology and business management. He studied at Addis Ababa University and graduated with a degree in Science In Information System."
+  },
+  {
+    "category": "General Information",
+    "question": "How can I become a member of RentSmart?",
+    "answer": "You can become a member by signing up on our website or mobile app and creating an account."
+  },
+  {
+    "category": "General Information",
+    "question": "Who is Melkie Yilk?",
+    "answer": "Melkie Yilk is the owner and CEO of RentSmart. He is a visionary leader with a passion for innovation and customer satisfaction. He has a background in technology and business management. He studied at Addis Ababa University and graduated with a degree in Science In Information System."
+  },
+  {
+    "category": "General Information",
+    "question": "How does RentSmart ensure the quality of rented items?",
+    "answer": "RentSmart has a review and rating system where users can provide feedback on the items they rent, helping maintain high-quality standards."
+  },
+  {
+    "category": "General Information",
+    "question": "Are there any membership fees for using RentSmart?",
+    "answer": "RentSmart provides free membership, but we have also premium plans with additional benefits. like we give bages to our loyal customers and also with some more uses. Please check our pricing page for more details."
+  },
+  {
+    "category": "General Information",
+    "question": "How secure is the payment process on RentSmart?",
+    "answer": "We use secure payment gateways and encryption to ensure that all transactions are safe and secure."
+  },
+  {
+    "category": "Frequently Asked Questions",
+    "question": "Is RentSmart available in 24 hours?",
+    "answer": "Yes, RentSmart operates 24/7, allowing you to rent items at any time."
+  },
+  {
+    "category": "Frequently Asked Questions",
+    "question": "How long can I rent an item?",
+    "answer": "You can rent items for periods ranging from a few hours to several weeks, depending on the item's availability and your needs."
+  },
+  {
+    "category": "Frequently Asked Questions",
+    "question": "What if the item I rented is damaged?",
+    "answer": "If an item is damaged during your rental period, please report it immediately through our support system. Depending on the situation, you may be liable for repair or replacement costs."
+  },
+  {
+    "category": "Frequently Asked Questions",
+    "question": "Can I extend my rental period?",
+    "answer": "Yes, you can request an extension of your rental period through your account dashboard, subject to the item's availability."
+  },
+  {
+    "category": "Frequently Asked Questions",
+    "question": "What is the cancellation policy?",
+    "answer": "You can cancel your booking only if it is still in 'pending' status. Once confirmed, cancellations are not allowed. and if you cancel a booking before confirmation, your wallet balance will be refunded automatically."
+  },
+  {
+    "category": "Frequently Asked Questions",
+    "question": "What if someone else damages the item I rented? or lost it?",
+    "answer": "If the item is damaged or lost by someone else, please report it immediately through our support system. You may be liable for repair or replacement costs depending on the situation."
+  },
+  {
+    "category": "Frequently Asked Questions",
+    "question": "What if the person renting from me damages or loses my item? or late return? or not return at all?",
+    "answer": "If the renter damages, loses, or fails to return your item, please report it immediately through our support system. We will investigate the issue and take appropriate action, which may include compensation from the renter. and we take late return seriously and we will charge a fine for that. and for not return at all we will take legal actions."
+  },
+  {
+    "category": "Frequently Asked Questions",
+    "question": "How do I list an item for rent on RentSmart?",
+    "answer": "To list an item, create an account, navigate to the 'List an Item' section, and provide details about the item along with photos."
+  },
+  {
+    "category": "Frequently Asked Questions",
+    "question": "How do I make a payment?",
+    "answer": "You can make payments using credit/debit cards, mobile wallets, or your RentSmart wallet balance."
+  },
+  {
+    "category": "Frequently Asked Questions",
+    "question": "Is RentSmart available in my country?",
+    "answer": "RentSmart is currently available in select countries. Please check our website for the latest list of supported locations."
+  },
+  {
+    "category": "Frequently Asked Questions",
+    "question": "What items can I rent on RentSmart?",
+    "answer": "You can rent a variety of everyday tools and items such as cameras, travel bags, watches, and more."
+  },
+  {
+    "category": "Frequently Asked Questions",
+    "question": "How do I create an account?",
+    "answer": "To create an account, click on the 'Sign Up' button on the homepage and fill in the required details."
+  },
+  {
+    "category": "Frequently Asked Questions",
+    "question": "What is RentSmart?",
+    "answer": "RentSmart is a platform that allows you to rent everyday tools and items such as cameras, travel bags, watches, and more, directly from other users."
+  },
+  {
+    "category": "Frequently Asked Questions",
+    "question": "How does RentSmart work?",
+    "answer": "You can browse available items, book them for a period, pay securely through the platform, and return them once the rental period is over."
+  },
+  {
+    "category": "Contact Us",
+    "question": "How can I contact RentSmart support?",
+    "answer": "You can reach our support team via email at support@rentsmart.com or through the 'Contact Us' page on our website."
+  },
+  {
+    "category": "Contact Us",
+    "question": "Does RentSmart offer live chat support?",
+    "answer": "Yes, we provide AI-powered live chat support on our support page, available 24/7 for your convenience."
+  },
+  {
+    "category": "Account Issues",
+    "question": "I forgot my password. What should I do?",
+    "answer": "Click on 'Forgot Password' on the login page and follow the instructions to reset your password."
+  },
+  {
+    "category": "Account Issues",
+    "question": "Can I update my profile information?",
+    "answer": "Yes, you can edit your personal details anytime from the 'Profile Settings' page after logging in."
+  },
+  {
+    "category": "Rentals & Bookings",
+    "question": "How do I rent an item?",
+    "answer": "Simply search for the item you want, select the rental period, and confirm your booking. The system will deduct the rental fee from your wallet balance."
+  },
+  {
+    "category": "Rentals & Bookings",
+    "question": "Can I cancel my booking?",
+    "answer": "Yes, you can cancel your booking only if it is still in 'pending' status. Once confirmed, cancellations are not allowed."
+  },
+  {
+    "category": "Payments & Billing",
+    "question": "What payment methods are supported?",
+    "answer": "We support payments via credit/debit cards, mobile wallets, and RentSmart wallet balance."
+  },
+  {
+    "category": "Payments & Billing",
+    "question": "How do refunds work?",
+    "answer": "If you cancel a booking before confirmation, your wallet balance will be refunded automatically."
+  },
+  {
+    "category": "Technical Support",
+    "question": "The app is not loading properly. What should I do?",
+    "answer": "Try clearing your browser cache or updating the app. If the problem persists, contact support."
+  },
+  {
+    "category": "Technical Support",
+    "question": "I found a bug in the system. How can I report it?",
+    "answer": "You can report bugs through the 'Report Issue' section in your dashboard or by emailing support@rentsmart.com."
+  }
+]
