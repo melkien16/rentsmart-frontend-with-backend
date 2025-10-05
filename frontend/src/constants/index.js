@@ -6,5 +6,6 @@ export const BOOKING_URL = "/api/bookings";
 export const USERS_URL = "/api/users";
 export const REVIEWS_URL = "/api/reviews";
 export const NOTIFICATIONS_URL = "/api/notifications";
-export const PAYPAL_URL = "/api/config/paypal";
+export const SUBSCRIPTIONS_URL = "/api/subscribe";
+export const MESSAGE_URL = "/api/messages";
 export const UPLOAD_URL = "/api/upload";
