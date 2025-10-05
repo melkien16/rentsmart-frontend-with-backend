@@ -1,17 +1,22 @@
+//isDelivered, deliveredAt, readAt
 const messages = [
   {
-    sender: "681341f308e7cd9877d588e5",
-    receiver: "681341f308e7cd9877d588e6",
+    sender: "689aa5de797dfb5254ac4d17",
+    receiver: "689aa5de797dfb5254ac4d18",
     message: "Hello, how are you?",
     isRead: false,
-    createdAt: new Date(),
+    isDelivered: true,
+    deliveredAt: new Date(),
+    readAt: null,
   },
   {
-    sender: "681341f308e7cd9877d588e6",
-    receiver: "681341f308e7cd9877d588e5",
+    sender: "689aa5de797dfb5254ac4d17",
+    receiver: "689aa5de797dfb5254ac4d18",
     message: "I'm good, thanks! How about you?",
     isRead: true,
-    createdAt: new Date(),
+    isDelivered: true,
+    deliveredAt: new Date(),
+    readAt: new Date(),
   },
 ];
 
