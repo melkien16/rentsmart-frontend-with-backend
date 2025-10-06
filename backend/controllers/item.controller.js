@@ -7,7 +7,7 @@ import Category from "../models/categoryModel.js";
 // @access  Public
 const getItems = asyncHandler(async (req, res) => {
   const page = Math.max(1, Number(req.query.page) || 1);
-  const limit = Math.min(100, Math.max(1, Number(req.query.limit) || 10));
+  const limit = Math.min(100, Math.max(1, Number(req.query.limit) || 100));
 
   const search = req.query.search || "";
   const minPrice = req.query.minPrice ? Number(req.query.minPrice) : undefined;
@@ -90,6 +90,23 @@ const getItems = asyncHandler(async (req, res) => {
     totalPages: Math.ceil(totalItems / limit),
     totalItems,
   });
+});
+
+// @desc   fetch my listing items
+// @route  GET  /api/mylistings
+// @access Private
+
+const getMylistings = asyncHandler(async (req, res) => {
+  const userId = req.user._id;
+
+  const items = await Item.find({ owner: userId });
+
+  if (items.length > 0) {
+    res.json(items);
+  } else {
+    res.status(404);
+    throw new Error("No items found for this user");
+  }
 });
 
 // @desc    Fetch items by user ID
@@ -267,4 +284,5 @@ export {
   deleteItem,
   getItemsByUserId,
   incrementItemViews,
+  getMylistings,
 };
