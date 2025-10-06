@@ -47,10 +47,24 @@ const userApiSlice = apiSlice.injectEndpoints({
         "Item",
       ],
     }),
+    getUserProfile: builder.query({
+      query: () => ({
+        url: `${USERS_URL}/profile`,
+        method: "GET",
+      }),
+      providesTags: ["User"],
+    }),
     getUserPublicById: builder.query({
       query: (id) => ({
         url: `${USERS_URL}/public/${id}`,
         method: "GET",
+      }),
+    }),
+    getUserPublicByEmail: builder.query({
+      query: (email) => ({
+        url: `${USERS_URL}/email`,
+        method: "GET",
+        params: { email },
       }),
     }),
   }),
@@ -61,4 +75,6 @@ export const {
   useLogoutMutation,
   useRegisterMutation,
   useGetUserPublicByIdQuery,
+  useGetUserPublicByEmailQuery,
+  useGetUserProfileQuery,
 } = userApiSlice;

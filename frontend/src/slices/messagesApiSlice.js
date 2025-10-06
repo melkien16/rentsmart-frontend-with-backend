@@ -41,14 +41,13 @@ export const messagesApiSlice = apiSlice.injectEndpoints({
         { type: "Message", id: messageId },
       ],
     }),
-    // Start a conversation (create a new message)
-    startConversation: builder.mutation({
-      query: ({ receiver, message }) => ({
-        url: `${MESSAGE_URL}/start`,
-        method: "POST",
-        body: { receiver, message },
+
+    getUserMessagesByEmail: builder.query({
+      query: (email) => ({
+        url: `/api/messages/email/${encodeURIComponent(email)}`,
+        method: "GET",
       }),
-      invalidatesTags: [{ type: "Message", id: "LIST" }],
+      providesTags: ["Message"],
     }),
 
     // Delete a message
@@ -68,4 +67,6 @@ export const {
   useSendMessageMutation,
   useMarkMessageAsReadMutation,
   useDeleteMessageMutation,
+  useGetUserMessagesByEmailQuery,
+  useLazyGetUserMessagesByEmailQuery,
 } = messagesApiSlice;

@@ -17,6 +17,13 @@ const productApiSlice = apiSlice.injectEndpoints({
         "Notification",
       ],
     }),
+    getMylistings: builder.query({
+      query: () => ({
+        url: `${PRODUCTS_URL}/mylistings`,
+        method: "GET",
+      }),
+      providesTags: ["Item", "Category", "User"],
+    }),
     getProductById: builder.query({
       query: (id) => ({
         url: `${PRODUCTS_URL}/${id}`,
@@ -79,4 +86,5 @@ export const {
   useCreateProductMutation,
   useGetProductsByUserIdQuery,
   useIncrementItemViewsMutation,
+  useGetMylistingsQuery
 } = productApiSlice;
