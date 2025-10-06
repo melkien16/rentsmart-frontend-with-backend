@@ -6,42 +6,83 @@ import Category from "../models/categoryModel.js";
 // @route   GET /api/items
 // @access  Public
 const getItems = asyncHandler(async (req, res) => {
-  const page = Number(req.query.page) || 1; // default to page 1
-  const limit = Number(req.query.limit) || 10; // default 10 items per page
-  const search = req.query.search || "";
-  const minPrice = req.query.minPrice ? Number(req.query.minPrice) : 0;
-  const maxPrice = req.query.maxPrice
-    ? Number(req.query.maxPrice)
-    : Number.MAX_SAFE_INTEGER;
-  const status = req.query.status; // e.g., "Available"
-  const category = req.query.category; // optional
-  const tags = req.query.tags ? req.query.tags.split(",") : [];
+  const page = Math.max(1, Number(req.query.page) || 1);
+  const limit = Math.min(100, Math.max(1, Number(req.query.limit) || 10));
 
-  // Build dynamic query object
-  const query = {};
+  const search = req.query.search || "";
+  const minPrice = req.query.minPrice ? Number(req.query.minPrice) : undefined;
+  const maxPrice = req.query.maxPrice ? Number(req.query.maxPrice) : undefined;
+  const status = req.query.status;
+  const category = req.query.category;
+  const tags = req.query.tags ? req.query.tags.split(",") : [];
+  const title = req.query.title || "";
+
+  // Base filters
+  const baseMatch = {};
 
   if (search) {
-    query.name = { $regex: search, $options: "i" };
+    baseMatch.name = { $regex: search, $options: "i" };
   }
 
-  if (minPrice || maxPrice !== Number.MAX_SAFE_INTEGER) {
-    query.price = { $gte: minPrice, $lte: maxPrice };
+  if (minPrice !== undefined || maxPrice !== undefined) {
+    baseMatch.price = {};
+    if (minPrice !== undefined) baseMatch.price.$gte = minPrice;
+    if (maxPrice !== undefined) baseMatch.price.$lte = maxPrice;
   }
 
-  if (status) query.status = status;
-  if (category) query.category = category;
-  if (tags.length > 0) query.tags = { $all: tags };
+  if (status) baseMatch.status = status;
 
-  const totalItems = await Item.countDocuments(query);
+  // Aggregation pipeline
+  const pipeline = [
+    { $match: baseMatch },
+    {
+      $addFields: {
+        titleMatch: title
+          ? {
+              $cond: [
+                {
+                  $regexMatch: { input: "$title", regex: title, options: "i" },
+                },
+                1,
+                0,
+              ],
+            }
+          : 0,
+        categoryMatch: category
+          ? { $cond: [{ $eq: ["$category", category] }, 1, 0] }
+          : 0,
+        tagMatches:
+          tags.length > 0
+            ? { $size: { $setIntersection: ["$tags", tags] } }
+            : 0,
+      },
+    },
+    {
+      $addFields: {
+        relevance: {
+          $add: [
+            { $multiply: ["$titleMatch", 100] }, // title is strongest
+            { $multiply: ["$categoryMatch", 10] }, // category next
+            "$tagMatches", // tags weaker
+          ],
+        },
+      },
+    },
+    { $sort: { relevance: -1, createdAt: -1 } },
+    { $skip: (page - 1) * limit },
+    { $limit: limit },
+  ];
 
-  const items = await Item.find(query)
-    .populate(
-      "owner",
-      "name email avatar phone address isPremium isVerified createdAt"
-    )
-    .skip((page - 1) * limit)
-    .limit(limit)
-    .sort({ createdAt: -1 });
+  const items = await Item.aggregate(pipeline);
+
+  // populate owner (aggregation doesn't auto-populate)
+  await Item.populate(items, {
+    path: "owner",
+    select: "name email avatar phone address isPremium isVerified createdAt",
+  });
+
+  // count total (without pagination but with base filters)
+  const totalItems = await Item.countDocuments(baseMatch);
 
   res.json({
     items,
