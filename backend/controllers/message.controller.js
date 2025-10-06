@@ -188,6 +188,133 @@ const getMessages = asyncHandler(async (req, res) => {
   });
 });
 
+// @desc    Get a user profile by email to start a new conversation and return the same as getAllMessages
+// @route   GET /api/messages/user?email=
+// @access  Private
+const getUserMessageByEmail = asyncHandler(async (req, res) => {
+  const email = req.params.email;
+  const loggedInUserId = req.user._id;
+
+  if (!email) {
+    res.status(400);
+    throw new Error("Email query parameter is required");
+  }
+
+  const user = await User.findOne({ email }).select(
+    "_id name email avatar isOnline lastSeen"
+  );
+
+  console.log("Found user:", user);
+
+  if (!user) {
+    res.status(404);
+    throw new Error("User not found");
+  }
+
+  if (user._id.toString() === loggedInUserId.toString()) {
+    res.status(400);
+    throw new Error("You cannot start a conversation with yourself");
+  }
+
+  // Check if there's already a conversation between the two users
+  const conversationId =
+    loggedInUserId.toString() > user._id.toString()
+      ? `${user._id}_${loggedInUserId}`
+      : `${loggedInUserId}_${user._id}`;
+
+  const existingConversation = await Message.aggregate([
+    {
+      $match: {
+        $or: [{ sender: loggedInUserId }, { receiver: loggedInUserId }],
+      },
+    },
+    {
+      $addFields: {
+        conversationId: {
+          $cond: [
+            {
+              $gt: [{ $toString: "$sender" }, { $toString: "$receiver" }],
+            },
+            {
+              $concat: [
+                { $toString: "$receiver" },
+                "_",
+                { $toString: "$sender" },
+              ],
+            },
+            {
+              $concat: [
+                { $toString: "$sender" },
+                "_",
+                { $toString: "$receiver" },
+              ],
+            },
+          ],
+        },
+      },
+    },
+    {
+      $match: { conversationId },
+    },
+    {
+      $group: {
+        _id: "$conversationId",
+        messages: { $push: "$$ROOT" },
+        lastMessage: { $last: "$$ROOT" },
+      },
+    },
+    {
+      $addFields: {
+        otherUser: {
+          $cond: [
+            {
+              $eq: [{ $arrayElemAt: ["$messages.sender", 0] }, loggedInUserId],
+            },
+            { $arrayElemAt: ["$messages.receiver", 0] },
+            { $arrayElemAt: ["$messages.sender", 0] },
+          ],
+        },
+      },
+    },
+    {
+      $lookup: {
+        from: "users",
+        localField: "otherUser",
+        foreignField: "_id",
+        as: "otherUser",
+      },
+    },
+    { $unwind: "$otherUser" },
+    {
+      $project: {
+        _id: 0,
+        otherUserInfo: {
+          _id: "$otherUser._id",
+          name: "$otherUser.name",
+          avatar: "$otherUser.avatar",
+          lastSeen: "$otherUser.lastSeen",
+          isOnline: "$otherUser.isOnline",
+        },
+        conversations: "$messages",
+        lastMessageInfo: "$lastMessage",
+        conversationId: "$_id",
+      },
+    },
+  ]);
+
+  if (existingConversation.length > 0) {
+    return res.json(existingConversation[0]);
+  } else {
+    // No existing conversation, return user info with empty messages
+    return res.json({
+      otherUserInfo: user,
+      conversations: [],
+      lastMessageInfo: null,
+      conversationId,
+    });
+  }
+});
+
 // @desc    Mark a message as read
 // @route   PUT /api/messages/:id/read
 // @access  Private
@@ -243,4 +370,5 @@ export {
   markMessageAsRead,
   getConversationById,
   deleteMessage,
+  getUserMessageByEmail,
 };
