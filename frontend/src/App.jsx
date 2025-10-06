@@ -7,7 +7,6 @@ import {
   BrowserRouter as Router,
   Routes,
   Route,
-  useNavigate,
   useLocation,
   Navigate,
 } from "react-router-dom";
@@ -35,7 +34,6 @@ import { registerSocketListeners } from "./socketListeners";
 
 const AppRoutes = () => {
   const isLoading = true;
-  const navigate = useNavigate();
   const location = useLocation();
 
   // Determine if we are on a dashboard route
@@ -50,30 +48,14 @@ const AppRoutes = () => {
   return (
     <>
       {/* Show Navbar and Footer on all non-dashboard pages */}
-      {!isDashboard && (
-        <Navbar
-          onSignInClick={() => navigate("/signin")}
-          onBrowseClick={() => navigate("/browse-items")}
-        />
-      )}
+      {!isDashboard && <Navbar />}
       <Routes>
-        <Route
-          path="/"
-          element={
-            <LandingPage
-              onSignInClick={() => navigate("/signin")}
-              onBrowseClick={() => navigate("/browse-items")}
-            />
-          }
-        />
+        <Route path="/" element={<LandingPage />} />
         <Route
           path="/owner-profile/:id"
           element={<OwnerProfileDetailOwner />}
         />
-        <Route
-          path="/signin"
-          element={<SignIn onSwitchToSignUp={() => navigate("/signup")} />}
-        />
+        <Route path="/signin" element={<SignIn />} />
         <Route
           path="/booking-summary"
           element={
@@ -82,10 +64,7 @@ const AppRoutes = () => {
             </PrivateRoute>
           }
         />
-        <Route
-          path="/signup"
-          element={<SignUp onSwitchToSignIn={() => navigate("/signin")} />}
-        />
+        <Route path="/signup" element={<SignUp />} />
         <Route path="/items" element={<ProductBrowse />} />
         <Route path="/items/:id" element={<ProductDetailWrapper />} />
         <Route
