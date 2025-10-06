@@ -10,6 +10,7 @@ import {
   deleteUser,
   updateUser,
   getUserPublicById,
+  getUserByEmail,
 } from "../controllers/user.controller.js";
 import { protect, admin } from "../middleware/authMiddleware.js";
 
@@ -24,6 +25,8 @@ router
   .put(protect, updateUserProfile);
 
 router.route("/").post(registerUser).get(protect, admin, getUsers);
+
+router.get("/email", getUserByEmail);
 
 // /api/users/public/:id
 router.get("/public/:id", getUserPublicById);
