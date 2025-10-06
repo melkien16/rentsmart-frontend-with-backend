@@ -22,6 +22,7 @@ const authUser = asyncHandler(async (req, res) => {
       isAdmin: user.isAdmin,
       isPremium: user.isPremium,
       avatar: user.avatar,
+      token: res.cookie.jwt,
     });
   } else {
     res.status(401);
@@ -102,6 +103,7 @@ const getUserProfile = asyncHandler(async (req, res) => {
       avatar: user.avatar,
       isPremium: user.isPremium,
       verification: user.verification,
+      createdAt: user.createdAt,
     });
   } else {
     res.status(404);
@@ -179,7 +181,27 @@ const getUserById = asyncHandler(async (req, res) => {
 const getUserPublicById = asyncHandler(async (req, res) => {
   // also add id name, email, phone, address, avatar, isPremium, verification, createdAt
   const user = await User.findById(req.params.id).select(
-    "name email phone address avatar isPremium verification createdAt _id"
+    "name email phone address avatar isOnline lastSeen isPremium verification createdAt _id"
+  );
+  if (user) {
+    res.status(200).json(user);
+  } else {
+    res.status(404);
+    throw new Error("User not found");
+  }
+});
+
+//@desc Get user by email
+//@route GET /api/users/email
+//@access  public
+const getUserByEmail = asyncHandler(async (req, res) => {
+  const { email } = req.query; // ✅ use query params
+  if (!email) {
+    res.status(400);
+    throw new Error("Email is required");
+  }
+  const user = await User.findOne({ email }).select(
+    "name email phone address avatar isPremium verification isOnline lastSeen createdAt _id"
   );
   if (user) {
     res.status(200).json(user);
@@ -249,4 +271,5 @@ export {
   deleteUser,
   updateUser,
   getUserPublicById,
+  getUserByEmail,
 };
