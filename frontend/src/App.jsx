@@ -1,6 +1,6 @@
-import React from "react";
+import { useEffect } from "react";
 import { ToastContainer } from "react-toastify";
-import { useSelector, Provider } from "react-redux";
+import { useSelector } from "react-redux";
 import "react-toastify/dist/ReactToastify.css";
 
 import {
@@ -18,8 +18,8 @@ import { UserDashboard } from "./components/dashboard/UserDashboard";
 import { AdminDashboard } from "./components/dashboard/AdminDashboard";
 import { LandingPage } from "./components/LandingPage";
 import { ProductBrowse } from "./components/browse/ProductBrowse";
-import { Navbar } from "./components/Navbar";
-import { Footer } from "./components/Footer";
+import { Navbar } from "./components/navBar/Navbar";
+import { Footer } from "./components/footer/Footer";
 import { Support } from "./components/Support";
 import NotFound from "./components/NotFound";
 import ProductDetailWrapper from "./helper/ProductsDetailWrapper";
@@ -28,6 +28,10 @@ import BookingSummary from "./components/booking/BookingSummary";
 import OwnerProfileDetailOwner from "./components/profile/OwnerProfileDetail";
 import ProfilePage from "./components/profile/ProfilePage";
 import AddNewItem from "./components/ListItems";
+import Message from "./components/Message/Message";
+import VerificationStatus from "./components/profile/Verification";
+import { initSocket } from "./socket";
+import { registerSocketListeners } from "./socketListeners";
 
 const AppRoutes = () => {
   const isLoading = true;
@@ -101,10 +105,26 @@ const AppRoutes = () => {
           }
         />
         <Route
+          path="verify"
+          element={
+            <PrivateRoute>
+              <VerificationStatus />
+            </PrivateRoute>
+          }
+        />
+        <Route
           path="/profile"
           element={
             <PrivateRoute>
               <ProfilePage />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/user/message"
+          element={
+            <PrivateRoute>
+              <Message />
             </PrivateRoute>
           }
         />
@@ -132,12 +152,28 @@ function PrivateRoute({ children }) {
 }
 
 function App() {
+  const { userInfo } = useSelector((state) => state.auth);
+  const user = userInfo || null;
+
+  useEffect(() => {
+    if (user?._id) {
+      const socket = initSocket();
+      socket.connect();
+      registerSocketListeners(store, user._id);
+    }
+
+    return () => {
+      if (user?._id) {
+        const socket = initSocket();
+        socket.disconnect();
+      }
+    };
+  }, [user]);
+
   return (
-    <Provider store={store}>
-      <Router>
-        <AppRoutes />
-      </Router>
-    </Provider>
+    <Router>
+      <AppRoutes />
+    </Router>
   );
 }
 
