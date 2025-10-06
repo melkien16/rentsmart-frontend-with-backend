@@ -44,26 +44,11 @@ const userSchema = new mongoose.Schema(
     lastSeen: {
       type: Date,
     },
-    verification: [
-      {
-        isEmailVerified: {
-          type: Boolean,
-          default: false,
-        },
-      },
-      {
-        isPhoneVerified: {
-          type: Boolean,
-          default: false,
-        },
-      },
-      {
-        isIdVerified: {
-          type: Boolean,
-          default: false,
-        },
-      },
-    ],
+    verification: {
+      isEmailVerified: { type: Boolean, default: false },
+      isPhoneVerified: { type: Boolean, default: false },
+      isIdVerified: { type: Boolean, default: false },
+    },
   },
   {
     timestamps: true,
