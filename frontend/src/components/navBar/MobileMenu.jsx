@@ -1,11 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import {
-  User,
-  LogOut,
-  LayoutDashboard,
-  MessageSquare,
-} from "lucide-react";
+import { User, LogOut, LayoutDashboard, MessageSquare } from "lucide-react";
 import { Button } from "../ui/Button";
 
 import navItems from "./navItems";

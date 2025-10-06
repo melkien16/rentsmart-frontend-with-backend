@@ -21,11 +21,6 @@ const MobileChatHeader = ({
           <ArrowLeft className="w-5 h-5" />
         </button>
         <div className="flex items-center gap-3">
-          <div className="relative">
-            {selectedConversation.otherUserInfo.isOnline && (
-              <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-green-400 rounded-full border-2 border-gray-900" />
-            )}
-          </div>
           <div>
             <h3 className="text-white font-semibold">
               {selectedConversation.otherUserInfo.name}

@@ -1,8 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import {
-  ChevronDown,
-} from "lucide-react";
+import { ChevronDown } from "lucide-react";
 import { Button } from "../ui/Button";
 import NotificationModal from "../ui/NotificationModal";
 import navItems from "./navItems";

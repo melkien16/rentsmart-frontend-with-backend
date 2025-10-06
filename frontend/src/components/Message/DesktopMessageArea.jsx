@@ -17,9 +17,9 @@ const DesktopMessageArea = ({
       className="h-[80%] overflow-y-auto p-4 space-y-4"
       ref={messagesContainerRef}
     >
-      {findConv[0].conversations.map((message) => (
+      {findConv[0].conversations.map((message, index) => (
         <div
-          key={`${message._id}-${selectedConversation.id}`}
+          key={index}
           className={`flex ${
             message.sender === userInfo._id ? "justify-end" : "justify-start"
           }`}

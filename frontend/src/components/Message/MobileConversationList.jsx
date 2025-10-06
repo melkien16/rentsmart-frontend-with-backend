@@ -1,6 +1,6 @@
-import React from "react";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
+import SearchNewUser from "./SearchNewUser";
 
 dayjs.extend(relativeTime);
 
@@ -10,12 +10,19 @@ const MobileConversationList = ({
   setSelectedConversation,
   onlineUsers,
 }) => {
+  
   return (
     <div className="lg:col-span-1 bg-white/5 border border-white/10 overflow-hidden min-h-[85vh] h-full">
-      <div className="p-4 border-b border-white/10">
-        <h3 className="text-lg font-bold text-white">Conversations</h3>
+      <div className="py-4 border-b border-white/10">
+        <SearchNewUser  />
       </div>
       <div className="overflow-y-auto">
+        {/* check if filtered conversation is empty */}
+        {filteredConversations.length === 0 && (
+          <p className="text-gray-400 text-center p-4">
+            No conversations found. Start a new chat!
+          </p>
+        )}
         {filteredConversations.map((conversation) => (
           <div
             key={conversation.conversationId}
@@ -44,7 +51,7 @@ const MobileConversationList = ({
                     {conversation.otherUserInfo.name}
                   </h4>
                   <span className="text-gray-400 text-xs">
-                    {dayjs(conversation.lastMessageInfo.createdAt).format(
+                    {dayjs(conversation.lastMessageInfo?.createdAt).format(
                       "HH : mm a"
                     )}
                   </span>
@@ -56,7 +63,7 @@ const MobileConversationList = ({
                       : "text-gray-400"
                   }`}
                 >
-                  {conversation.lastMessageInfo.message || "last message"}
+                  {conversation.lastMessageInfo?.message || ""}
                 </p>
               </div>
             </div>

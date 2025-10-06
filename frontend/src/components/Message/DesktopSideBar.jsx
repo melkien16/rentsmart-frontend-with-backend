@@ -1,7 +1,7 @@
-import React from "react";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { Card } from "../ui/Card";
+import SearchNewUser from "./SearchNewUser";
 
 dayjs.extend(relativeTime);
 
@@ -13,10 +13,16 @@ const DesktopSideBar = ({
 }) => {
   return (
     <Card className="lg:col-span-1 overflow-hidden ">
-      <div className="p-4 border-b bg-green-700/25 border-white/10">
-        <h3 className="text-lg font-bold text-white">Conversations</h3>
+      <div className="p-4 border-b border-white/10">
+        <SearchNewUser />
       </div>
+
       <div className="overflow-y-auto h-[70vh]">
+        {filteredConversations.length === 0 && (
+          <p className="text-gray-400 text-center p-4">
+            No conversations found. Start a new chat!
+          </p>
+        )}
         {filteredConversations.map((conversation) => (
           <div
             key={conversation.conversationId}
@@ -44,7 +50,7 @@ const DesktopSideBar = ({
                     {conversation.otherUserInfo.name}
                   </h4>
                   <span className="text-gray-400 text-xs">
-                    {dayjs(conversation.lastMessageInfo.createdAt).format(
+                    {dayjs(conversation.lastMessageInfo?.createdAt).format(
                       "HH : mm a"
                     )}
                   </span>
@@ -56,7 +62,7 @@ const DesktopSideBar = ({
                       : "text-gray-400"
                   }`}
                 >
-                  {conversation.lastMessageInfo.message || ""}
+                  {conversation.lastMessageInfo?.message}
                 </p>
               </div>
             </div>

@@ -1,6 +1,7 @@
 import React from "react";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
+import { Check, CheckCheck } from "lucide-react";
 
 dayjs.extend(relativeTime);
 
@@ -16,9 +17,9 @@ const MobileMessageArea = ({
       className="h-[65vh] overflow-y-auto p-4 space-y-4"
       ref={messagesContainerRef}
     >
-      {findConv[0].conversations.map((message) => (
+      {findConv[0].conversations.map((message, index) => (
         <div
-          key={`${message._id}-${selectedConversation.conversationId}`}
+          key={index}
           className={`flex ${
             message.sender === userInfo._id ? "justify-end" : "justify-start"
           }`}
@@ -35,15 +36,27 @@ const MobileMessageArea = ({
                 ? JSON.stringify(message.message)
                 : message.message}
             </p>
-            <p
-              className={`text-xs mt-1 ${
-                message.sender === userInfo._id
-                  ? "text-black/60"
-                  : "text-emerald-400/50"
-              }`}
-            >
-              {dayjs(message.createdAt).format("HH : mm a")}
-            </p>
+            <div className="flex gap-2 items-center">
+              <p
+                className={`text-xs mt-1 ${
+                  message.sender === userInfo._id
+                    ? "text-black/60"
+                    : "text-emerald-400/50"
+                }`}
+              >
+                {dayjs(message.createdAt).format("HH : mm a")}
+              </p>
+              {message.sender == userInfo._id && (
+                <p>
+                  {message.status === "sent" ? (
+                    <Check className="w-4 h-4 text-gray-400" />
+                  ) : message.status === "delivered" ||
+                    message.status === "read" ? (
+                    <CheckCheck className="w-4 h-4 text-gray-400" />
+                  ) : null}
+                </p>
+              )}
+            </div>
           </div>
         </div>
       ))}

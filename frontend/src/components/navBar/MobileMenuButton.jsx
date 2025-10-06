@@ -1,10 +1,7 @@
 import React from "react";
 import { Menu, X } from "lucide-react";
 
-const MobileMenuButton = ({
-  isMobileMenuOpen,
-  setIsMobileMenuOpen,
-}) => {
+const MobileMenuButton = ({ isMobileMenuOpen, setIsMobileMenuOpen }) => {
   return (
     <div className="md:hidden">
       <button

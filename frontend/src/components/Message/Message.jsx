@@ -32,7 +32,15 @@ const Messages = () => {
   const conversationId = selectedConversation?.conversationId;
   const isTyping = typingUsers.hasOwnProperty(conversationId);
 
-  const { data: messagesData, isLoading, error } = useGetAllMessagesQuery();
+  const { data: messagesData, refetch } = useGetAllMessagesQuery(undefined, {
+    refetchOnMountOrArgChange: true,
+    refetchOnFocus: false,
+    refetchOnReconnect: true,
+  });
+
+  useEffect(() => {
+    refetch();
+  }, [refetch]);
 
   useEffect(() => {
     if (messagesData) {

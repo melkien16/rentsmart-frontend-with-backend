@@ -34,7 +34,7 @@ const DesktopSearchBar = ({
             <button
               onMouseDown={handlePressStart}
               onMouseUp={handlePressEnd}
-              onMouseLeave={handlePressEnd} // if user drags away
+              onMouseLeave={handlePressEnd}
               onTouchStart={handlePressStart}
               onTouchEnd={handlePressEnd}
               className={`p-1.5 sm:p-2 relative rounded-lg transition-all duration-300 ${
