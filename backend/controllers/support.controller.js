@@ -13,7 +13,7 @@ const faqs = JSON.parse(fs.readFileSync(faqsPath, "utf8"));
 
 // --- Initialize Gemini API ---
 const ai = new GoogleGenAI({
-  apiKey: "AIzaSyCdd7B0CpZgMMQKJu-mB1MSoZZJx1z0Xio", // keep this secure
+  apiKey: process.env.GEMINI_API_KEY, // keep this secure
 });
 
 // --- Build full context for AI ---
