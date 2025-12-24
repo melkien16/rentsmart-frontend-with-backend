@@ -24,6 +24,7 @@ const MobileView = ({
   handleBackToSidebar,
   findConv,
   userInfo,
+  handleTyping
 }) => {
   return (
     <>
@@ -60,6 +61,7 @@ const MobileView = ({
                 newMessage={newMessage}
                 setNewMessage={setNewMessage}
                 handleSendMessage={handleSendMessage}
+                handleTyping={handleTyping}
               />
             </>
           ) : (

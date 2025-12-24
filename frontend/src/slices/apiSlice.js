@@ -14,7 +14,7 @@ export const apiSlice = createApi({
     "Notification",
     "Category",
     "Wallet",
-    "Message", // ✅ Add messages as a tag type
+    "Message", 
     "Conversation",
   ],
   endpoints: (builder) => ({}),

@@ -12,12 +12,18 @@ import {
   Wallet as Wallet,
 } from "lucide-react";
 
-import { mockWalletData } from "../mockUserData"
+import { mockWalletData } from "../mockUserData";
 
 const WalletDeposit = () => {
   const [selectedTransaction, setSelectedTransaction] = useState(null);
   const [showWithdrawModal, setShowWithdrawModal] = useState(false);
   const [showAddPaymentMethod, setShowAddPaymentMethod] = useState(false);
+  const [paymentMethodForm, setPaymentMethodForm] = useState({
+    type: "",
+    provider: "",
+    accountName: "",
+    accountNumber: "",
+  });
 
   const getTransactionTypeColor = (type) => {
     switch (type) {
@@ -47,6 +53,19 @@ const WalletDeposit = () => {
       default:
         return DollarSign;
     }
+  };
+
+  const handleSendPaymentMethod = (e) => {
+    e.preventDefault();
+    console.log("Payment Method Added:", paymentMethodForm);
+    // Reset form and close modal
+    setPaymentMethodForm({
+      type: "",
+      provider: "",
+      accountName: "",
+      accountNumber: "",
+    });
+    setShowAddPaymentMethod(false);
   };
 
   return (
@@ -302,9 +321,15 @@ const WalletDeposit = () => {
               <div>
                 <label className="text-gray-400 text-sm">Payment Method</label>
                 <select className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:border-blue-400 transition-colors">
-                  <option value="">Select payment method</option>
+                  <option value="" className="bg-gray-900">
+                    Select payment method
+                  </option>
                   {mockWalletData.paymentMethods.map((method) => (
-                    <option key={method.id} value={method.id}>
+                    <option
+                      key={method.id}
+                      value={method.id}
+                      className="bg-gray-900"
+                    >
                       {method.name} - {method.account}
                     </option>
                   ))}
@@ -346,30 +371,80 @@ const WalletDeposit = () => {
             <div className="p-6 space-y-6">
               <div>
                 <label className="text-gray-400 text-sm">Payment Type</label>
-                <select className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:border-emerald-400 transition-colors">
-                  <option value="">Select type</option>
-                  <option value="bank">Bank Account</option>
-                  <option value="card">Credit/Debit Card</option>
+                <select
+                  className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:border-emerald-400 transition-colors"
+                  value={paymentMethodForm.type}
+                  onChange={(e) =>
+                    setPaymentMethodForm({
+                      ...paymentMethodForm,
+                      type: e.target.value,
+                    })
+                  }
+                >
+                  <option value="" className="bg-gray-900">
+                    Select type
+                  </option>
+                  <option value="bank" className="bg-gray-900">
+                    Bank Account
+                  </option>
+                  <option value="card" className="bg-gray-900">
+                    Credit/Debit Card
+                  </option>
                 </select>
               </div>
               <div>
-                <label className="text-gray-400 text-sm">Account Name</label>
+                <label className="text-gray-400 text-sm">Provider</label>
+                <input
+                  type="text"
+                  className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:border-emerald-400 transition-colors"
+                  placeholder="CBE, CBE Birr, Telebirr, PayPal..."
+                  value={paymentMethodForm.provider}
+                  onChange={(e) =>
+                    setPaymentMethodForm({
+                      ...paymentMethodForm,
+                      provider: e.target.value,
+                    })
+                  }
+                />
+              </div>
+              <div>
+                <label className="text-gray-400 text-sm">
+                  Account User Name
+                </label>
                 <input
                   type="text"
                   className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:border-emerald-400 transition-colors"
                   placeholder="Enter account name"
+                  value={paymentMethodForm.accountName}
+                  onChange={(e) =>
+                    setPaymentMethodForm({
+                      ...paymentMethodForm,
+                      accountName: e.target.value,
+                    })
+                  }
                 />
               </div>
               <div>
-                <label className="text-gray-400 text-sm">Account Number</label>
+                <label className="text-gray-400 text-sm">
+                  Account/Card Number
+                </label>
                 <input
                   type="text"
                   className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:border-emerald-400 transition-colors"
-                  placeholder="Enter account number"
+                  placeholder="Enter account/card number"
+                  value={paymentMethodForm.accountNumber}
+                  onChange={(e) =>
+                    setPaymentMethodForm({
+                      ...paymentMethodForm,
+                      accountNumber: e.target.value,
+                    })
+                  }
                 />
               </div>
               <div className="flex space-x-3">
-                <button className="flex-1 px-4 py-2 bg-emerald-400 text-black rounded-lg hover:bg-emerald-500 transition-colors font-semibold">
+                <button className="flex-1 px-4 py-2 bg-emerald-400 text-black rounded-lg hover:bg-emerald-500 transition-colors font-semibold"
+                onClick={handleSendPaymentMethod}
+                >
                   Add Method
                 </button>
                 <button

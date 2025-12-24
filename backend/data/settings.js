@@ -1,4 +1,4 @@
-export default settings = [
+const settings = [
   {
     user: "689aa5de797dfb5254ac4d17",
     notifications: {
@@ -7,8 +7,12 @@ export default settings = [
       device: { enabled: true },
     },
     paymentMethods: [
-      { provider: "Visa", accountLast4: "4321", isDefault: true },
-      { provider: "PayPal", accountLast4: "—", isDefault: false },
+      {
+        type: "card",
+        provider: "PayPal",
+        accountNumber: "silepaypal@rentsmart.com",
+        accountName: "PayPal",
+      },
     ],
     visibility: {
       publicProfile: true,
@@ -41,8 +45,12 @@ export default settings = [
       device: { enabled: true },
     },
     paymentMethods: [
-      { provider: "Visa", accountLast4: "4321", isDefault: true },
-      { provider: "PayPal", accountLast4: "—", isDefault: false },
+      {
+        type: "card",
+        provider: "PayPal",
+        accountNumber: "silepaypal@rentsmart.com",
+        accountName: "PayPal",
+      },
     ],
     visibility: {
       publicProfile: true,
@@ -75,8 +83,12 @@ export default settings = [
       device: { enabled: true },
     },
     paymentMethods: [
-      { provider: "Visa", accountLast4: "4321", isDefault: true },
-      { provider: "PayPal", accountLast4: "—", isDefault: false },
+      {
+        type: "card",
+        provider: "Visa",
+        accountNumber: "**** **** **** 4321",
+        accountName: "Personal Visa",
+      },
     ],
     visibility: {
       publicProfile: true,
@@ -109,8 +121,12 @@ export default settings = [
       device: { enabled: true },
     },
     paymentMethods: [
-      { provider: "Visa", accountLast4: "4321", isDefault: true },
-      { provider: "PayPal", accountLast4: "—", isDefault: false },
+      {
+        type: "card",
+        provider: "Visa",
+        accountNumber: "4321",
+        accountName: "Personal Visa",
+      },
     ],
     visibility: {
       publicProfile: true,
@@ -143,8 +159,12 @@ export default settings = [
       device: { enabled: true },
     },
     paymentMethods: [
-      { provider: "Visa", accountLast4: "4321", isDefault: true },
-      { provider: "PayPal", accountLast4: "—", isDefault: false },
+      {
+        type: "card",
+        provider: "Visa",
+        accountNumber: "4321",
+        accountName: "Personal Visa",
+      },
     ],
     visibility: {
       publicProfile: true,
@@ -170,3 +190,5 @@ export default settings = [
     ],
   },
 ];
+
+export default settings;

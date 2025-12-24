@@ -1,7 +1,5 @@
 import React, { useState } from "react";
-import {
-  ResponsiveLayout,
-} from "./ui";
+import { ResponsiveLayout } from "./ui";
 import { Sidebar } from "./Sidebar";
 import { DashboardHeader } from "./DashboardHeader";
 import { UserOverview } from "./user/UserOverview";
@@ -14,7 +12,6 @@ import WalletDeposit from "./user/WalletDeposit";
 import PremiumSubscription from "./user/PremiumSubscription";
 import Favorites from "./user/Favorites";
 import Reviews from "./user/Reviews";
-import Messages from "./user/Messages";
 import Support from "./user/Support";
 import AccountSettings from "./user/AccountSettings";
 import MyRentalRequests from "./user/MyRentalRequest";
@@ -42,7 +39,6 @@ export const UserDashboard = () => {
       collateral: "Collateral",
       subscription: "Premium Subscription",
       favorites: "Favorites",
-      messages: "Messages",
       reviews: "Reviews",
       support: "Report a Problem",
       settings: "Account Settings",
@@ -72,8 +68,6 @@ export const UserDashboard = () => {
         return <PremiumSubscription />;
       case "favorites":
         return <Favorites />;
-      case "messages":
-        return <Messages />;
       case "reviews":
         return <Reviews />;
       case "support":
@@ -120,49 +114,4 @@ export const UserDashboard = () => {
       {renderContent()}
     </ResponsiveLayout>
   );
-
-  // return (
-  //   <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900">
-  //     <Sidebar
-  //       isCollapsed={false}
-  //       onToggle={() => setSidebarCollapsed(!sidebarCollapsed)}
-  //       activeSection={activeSection}
-  //       onSectionChange={handleSectionChange}
-  //     />
-
-  //     <div className="transition-all duration-300 ml-0 lg:ml-64">
-  //       <DashboardHeader
-  //         onToggleSidebar={() => setSidebarCollapsed(!sidebarCollapsed)}
-  //         title={getSectionTitle(activeSection)}
-  //       />
-
-  //       <main className="p-4 sm:p-6">{renderContent()}</main>
-  //     </div>
-
-  //     {/* Mobile Overlay */}
-  //     {sidebarCollapsed && (
-  //       <div
-  //         className="fixed inset-0 bg-black/50 z-30 lg:hidden"
-  //         onClick={() => setSidebarCollapsed(true)}
-  //       />
-  //     )}
-
-  //     {/* Mobile Sidebar */}
-  //     <div
-  //       className={`fixed left-0 top-0 h-full bg-black/95 backdrop-blur-md border-r border-white/10 transition-transform duration-300 z-40 lg:hidden ${
-  //         sidebarCollapsed ? "translate-x-0" : "-translate-x-full"
-  //       } w-64`}
-  //     >
-  //       <Sidebar
-  //         isCollapsed={false}
-  //         onToggle={() => setSidebarCollapsed(!sidebarCollapsed)}
-  //         activeSection={activeSection}
-  //         onSectionChange={(section) => {
-  //           setActiveSection(section);
-  //           setSidebarCollapsed(false); // Auto-close on mobile
-  //         }}
-  //       />
-  //     </div>
-  //   </div>
-  // );
 };

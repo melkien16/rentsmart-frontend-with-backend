@@ -7,10 +7,10 @@ const loginHistorySchema = new mongoose.Schema({
 });
 
 const paymentMethodSchema = new mongoose.Schema({
-  provider: { type: String, required: true }, 
-  accountLast4: { type: String },
-  addedAt: { type: Date, default: Date.now },
-  isDefault: { type: Boolean, default: false },
+  type: { type: String, enum: ["card", "bank"], required: true },
+  provider: { type: String },
+  accountNumber: { type: String },
+  accountName: { type: String },
 });
 
 const settingsSchema = new mongoose.Schema(
@@ -29,7 +29,10 @@ const settingsSchema = new mongoose.Schema(
       },
       sms: {
         enabled: { type: Boolean, default: false },
-        description: { type: String, default: "Receive updates via text message" },
+        description: {
+          type: String,
+          default: "Receive updates via text message",
+        },
       },
       device: {
         enabled: { type: Boolean, default: true },
@@ -49,7 +52,11 @@ const settingsSchema = new mongoose.Schema(
       twoStepVerification: { type: Boolean, default: false },
       twoFactorAuth: {
         enabled: { type: Boolean, default: false },
-        method: { type: String, enum: ["email", "sms", "authenticator"], default: "email" },
+        method: {
+          type: String,
+          enum: ["email", "sms", "authenticator"],
+          default: "email",
+        },
       },
       passwordLastChanged: { type: Date, default: new Date("2024-02-15") },
     },

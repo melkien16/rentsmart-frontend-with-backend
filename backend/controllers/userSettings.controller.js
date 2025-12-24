@@ -4,7 +4,7 @@ import Settings from "../models/userSettingsModel.js";
 // @desc    Get settings by user ID
 // @route   GET /api/settings
 // @access  Private
-const getSettingsByUserId = asyncHandler(async (req, res) => {
+const getSettings = asyncHandler(async (req, res) => {
   const userId = req.user._id;
   const settings = await Settings.findOne({ user: userId }).populate(
     "user",
@@ -59,7 +59,7 @@ const createUserSettings = asyncHandler(async (req, res) => {
 // @route   PUT /api/settings/notifications
 // @access  Private
 const updateNotifications = asyncHandler(async (req, res) => {
-  const { email, sms, push } = req.body;
+  const { email, sms, device } = req.body;
   const userId = req.user._id;
   const settings = await Settings.findOne({ user: userId });
 
@@ -72,8 +72,8 @@ const updateNotifications = asyncHandler(async (req, res) => {
     email ?? settings.notifications.email.enabled;
   settings.notifications.sms.enabled =
     sms ?? settings.notifications.sms.enabled;
-  settings.notifications.push.enabled =
-    push ?? settings.notifications.push.enabled;
+  settings.notifications.device.enabled =
+    device ?? settings.notifications.device.enabled;
 
   const updated = await settings.save();
   res.json(updated.notifications);
@@ -133,8 +133,8 @@ const updateSecuritySettings = asyncHandler(async (req, res) => {
 // @route   POST /api/settings/payment-methods
 // @access  Private
 const addPaymentMethod = asyncHandler(async (req, res) => {
-  const { provider, accountLast4, isDefault } = req.body;
-  const userId = req.user._id
+  const { type, provider, accountNumber, accountName } = req.body;
+  const userId = req.user._id;
   const settings = await Settings.findOne({ user: userId });
 
   if (!settings) {
@@ -143,9 +143,10 @@ const addPaymentMethod = asyncHandler(async (req, res) => {
   }
 
   const newMethod = {
+    type,
     provider,
-    accountLast4,
-    isDefault: isDefault ?? false,
+    accountNumber,
+    accountName,
   };
 
   // If this is set as default, unset others
@@ -183,7 +184,7 @@ const updatePasswordChangeDate = asyncHandler(async (req, res) => {
 // @access  Private
 const addLoginHistory = asyncHandler(async (req, res) => {
   const { device, location } = req.body;
-  const userId = req.user._id
+  const userId = req.user._id;
   const settings = await Settings.findOne({ user: userId });
 
   if (!settings) {
@@ -223,7 +224,7 @@ const getAllSettings = asyncHandler(async (req, res) => {
 });
 
 export {
-  getSettingsByUserId,
+  getSettings,
   createUserSettings,
   updateNotifications,
   updateVisibility,

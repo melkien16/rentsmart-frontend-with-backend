@@ -17,7 +17,7 @@ import {
   X,
 } from "lucide-react";
 import { Card } from "../ui/Card";
-import { Navbar } from "../Navbar";
+import { Navbar } from "../navBar/Navbar";
 
 export const ProductBrowse = () => {
   const navigate = useNavigate();

@@ -11,6 +11,7 @@ import {
   updateUser,
   getUserPublicById,
   getUserByEmail,
+  updateUserPassword,
 } from "../controllers/user.controller.js";
 import { protect, admin } from "../middleware/authMiddleware.js";
 
@@ -23,6 +24,7 @@ router
   .route("/profile")
   .get(protect, getUserProfile)
   .put(protect, updateUserProfile);
+router.put("/profile/password", protect, updateUserPassword);
 
 router.route("/").post(registerUser).get(protect, admin, getUsers);
 

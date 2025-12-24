@@ -38,12 +38,6 @@ export const DashboardHeader = ({ onToggleSidebar, title }) => {
 
         {/* Right Side */}
         <div className="flex items-center space-x-2 sm:space-x-4">
-          {/* Notifications */}
-          <button className="relative p-1 sm:p-2 rounded-lg hover:bg-white/10 transition-colors text-gray-400 hover:text-white">
-            <Bell className="w-4 h-4 sm:w-5 sm:h-5" />
-            <span className="absolute -top-1 -right-1 w-3 h-3 bg-emerald-400 rounded-full"></span>
-          </button>
-
           {/* User Menu */}
           <div className="flex items-center space-x-2 sm:space-x-3">
             <img

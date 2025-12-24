@@ -1,134 +1,10 @@
 import { useEffect } from "react";
-import { ToastContainer } from "react-toastify";
 import { useSelector } from "react-redux";
-import "react-toastify/dist/ReactToastify.css";
-
-import {
-  BrowserRouter as Router,
-  Routes,
-  Route,
-  useLocation,
-  Navigate,
-} from "react-router-dom";
+import { RouterProvider } from "react-router-dom";
+import { router } from "./router";
 import store from "./store";
-import { SignIn } from "./components/auth/SignIn";
-import { SignUp } from "./components/auth/SignUp";
-import { UserDashboard } from "./components/dashboard/UserDashboard";
-import { AdminDashboard } from "./components/dashboard/AdminDashboard";
-import { LandingPage } from "./components/LandingPage";
-import { ProductBrowse } from "./components/browse/ProductBrowse";
-import { Navbar } from "./components/navBar/Navbar";
-import { Footer } from "./components/footer/Footer";
-import { Support } from "./components/Support";
-import NotFound from "./components/NotFound";
-import ProductDetailWrapper from "./helper/ProductsDetailWrapper";
-import Loader from "./components/ui/Loader";
-import BookingSummary from "./components/booking/BookingSummary";
-import OwnerProfileDetailOwner from "./components/profile/OwnerProfileDetail";
-import ProfilePage from "./components/profile/ProfilePage";
-import AddNewItem from "./components/ListItems";
-import Message from "./components/Message/Message";
-import VerificationStatus from "./components/profile/Verification";
 import { initSocket } from "./socket";
 import { registerSocketListeners } from "./socketListeners";
-
-const AppRoutes = () => {
-  const isLoading = true;
-  const location = useLocation();
-
-  // Determine if we are on a dashboard route
-  const isDashboard =
-    location.pathname.startsWith("/user") ||
-    location.pathname.startsWith("/admin");
-
-  {
-    isLoading && <Loader />;
-  }
-
-  return (
-    <>
-      {/* Show Navbar and Footer on all non-dashboard pages */}
-      {!isDashboard && <Navbar />}
-      <Routes>
-        <Route path="/" element={<LandingPage />} />
-        <Route
-          path="/owner-profile/:id"
-          element={<OwnerProfileDetailOwner />}
-        />
-        <Route path="/signin" element={<SignIn />} />
-        <Route
-          path="/booking-summary"
-          element={
-            <PrivateRoute>
-              <BookingSummary />
-            </PrivateRoute>
-          }
-        />
-        <Route path="/signup" element={<SignUp />} />
-        <Route path="/items" element={<ProductBrowse />} />
-        <Route path="/items/:id" element={<ProductDetailWrapper />} />
-        <Route
-          path="/user"
-          element={
-            <PrivateRoute>
-              <UserDashboard />
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path="/list-item"
-          element={
-            <PrivateRoute>
-              <AddNewItem />
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path="verify"
-          element={
-            <PrivateRoute>
-              <VerificationStatus />
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path="/profile"
-          element={
-            <PrivateRoute>
-              <ProfilePage />
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path="/user/message"
-          element={
-            <PrivateRoute>
-              <Message />
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path="/admin"
-          element={
-            <PrivateRoute>
-              <AdminDashboard />
-            </PrivateRoute>
-          }
-        />
-        <Route path="/support" element={<Support />} />
-        {/* Fallback route */}
-        <Route path="*" element={<NotFound />} />
-      </Routes>
-      {!isDashboard && <Footer />}
-      <ToastContainer />
-    </>
-  );
-};
-
-function PrivateRoute({ children }) {
-  const { userInfo } = useSelector((state) => state.auth);
-  return userInfo ? children : <Navigate to="/signin" replace />;
-}
 
 function App() {
   const { userInfo } = useSelector((state) => state.auth);
@@ -149,11 +25,7 @@ function App() {
     };
   }, [user]);
 
-  return (
-    <Router>
-      <AppRoutes />
-    </Router>
-  );
+  return <RouterProvider router={router} />;
 }
 
 export default App;

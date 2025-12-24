@@ -76,6 +76,21 @@ const productApiSlice = apiSlice.injectEndpoints({
         "Notification",
       ],
     }),
+    getTopProducts: builder.query({
+      query: () => ({
+        url: `${PRODUCTS_URL}/top`,
+        method: "GET",
+      }),
+      keepUnusedDataFor: 5,
+      providesTags: [
+        "Item",
+        "Category",
+        "User",
+        "Booking",
+        "Review",
+        "Notification",
+      ],
+    }),
   }),
 });
 
@@ -86,5 +101,6 @@ export const {
   useCreateProductMutation,
   useGetProductsByUserIdQuery,
   useIncrementItemViewsMutation,
-  useGetMylistingsQuery
+  useGetMylistingsQuery,
+  useGetTopProductsQuery,
 } = productApiSlice;

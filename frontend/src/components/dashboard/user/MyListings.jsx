@@ -106,16 +106,14 @@ const MyListings = () => {
             <select
               value={filter}
               onChange={(e) => setFilter(e.target.value)}
-              className="px-4 py-2 rounded-xl bg-white/70 border border-white/80 text-white focus:outline-none focus:border-emerald-400"
+              className="px-4 py-2 rounded-xl bg-white/10 border border-white/80 text-white focus:outline-none focus:border-emerald-400"
             >
-              <option value="all">All Listings</option>
-              <option value="Available">Active</option>
-              <option value="Available Soon">Inactive</option>
-              <option value="Rented">Inactive</option>
+              <option value="all" className="bg-black/70">All Listings</option>
+              <option value="Available" className="bg-black/70">Active</option>
+              <option value="Rented" className="bg-black/70">Inactive</option>
             </select>
             <button
               className="px-6 py-2 bg-emerald-400 text-black rounded-xl hover:bg-emerald-500 transition-all duration-200 flex items-center gap-2 font-semibold"
-              // instead of opening a modal, just navigate to a /listings/new page with a redirect
               onClick={() => navigate("/list-item")}
             >
               <Plus className="w-4 h-4" />
@@ -301,7 +299,6 @@ const MyListings = () => {
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
-                        // Handle toggle status
                       }}
                       className="flex-1 px-3 py-2 bg-blue-400 text-white rounded-lg hover:bg-blue-500 transition-colors text-sm font-medium"
                     >

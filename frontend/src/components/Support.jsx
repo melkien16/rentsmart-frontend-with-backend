@@ -178,23 +178,87 @@ export const Support = () => {
     recognitionRef.current.start();
   };
 
-  const sendMessage = (e) => {
+  const sendMessage = async (e) => {
     e.preventDefault();
-    if (!input.trim()) return;
-    setMessages((msgs) => [...msgs, { sender: "user", text: input }]);
+
+    // Clear input immediately for snappy UX
+    const userInput = input;
     setInput("");
-    setTimeout(() => {
-      setMessages((msgs) => [
-        ...msgs,
+
+    // Add the user message + placeholder AI message
+    setMessages((prev) => [
+      ...prev,
+      { sender: "user", text: userInput },
+      { sender: "ai", text: "..." }, // temporary loading
+    ]);
+
+    try {
+      const res = await fetch("/api/support", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: userInput }),
+      });
+
+      if (!res.ok || !res.body) {
+        throw new Error("Server error");
+      }
+
+      const reader = res.body.getReader();
+      const decoder = new TextDecoder();
+      let aiReply = "";
+
+      while (true) {
+        const { value, done } = await reader.read();
+        if (done) break;
+
+        const chunk = decoder.decode(value, { stream: true });
+        const lines = chunk.split("\n\n");
+
+        for (const line of lines) {
+          if (line.startsWith("data:")) {
+            const data = line.replace(/^data:\s*/, "");
+
+            if (data === "[DONE]") {
+              return; // end of stream
+            }
+
+            try {
+              // Some chunks are JSON-stringified, some plain text
+              const parsed = JSON.parse(data);
+              aiReply += parsed;
+            } catch {
+              aiReply += data;
+            }
+
+            // Update the last AI message progressively
+            setMessages((prev) => {
+              const last = prev[prev.length - 1];
+              if (last && last.sender === "ai") {
+                return [...prev.slice(0, -1), { sender: "ai", text: aiReply }];
+              } else {
+                return [...prev, { sender: "ai", text: aiReply }];
+              }
+            });
+          }
+        }
+      }
+    } catch (err) {
+      console.error("Error in sendMessage:", err.message);
+
+      // Replace placeholder with friendly fallback
+      setMessages((prev) => [
+        ...prev.slice(0, -1),
         {
           sender: "ai",
-          text: "I'm an AI support assistant. I'll get back to you as soon as possible!",
+          text: "⚠️ We are currently out of service. Please contact us through other options.",
         },
       ]);
-      // Only scroll to bottom after AI responds
-      setTimeout(scrollToBottom, 100);
-    }, 1000);
+    }
   };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900">
@@ -272,7 +336,11 @@ export const Support = () => {
                           : "bg-gradient-to-r from-white/10 to-white/5 text-white rounded-bl-md border border-white/10"
                       }`}
                     >
-                      {msg.text}
+                      {msg.sender === "ai" && msg.text === "..." ? (
+                        <span className="animate-pulse">...</span>
+                      ) : (
+                        msg.text
+                      )}
                     </div>
                   </div>
                 ))}

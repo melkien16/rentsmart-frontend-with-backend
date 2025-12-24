@@ -22,8 +22,9 @@ import UploadRouter from "./routes/upload.routes.js";
 import HelpRouter from "./routes/help.routes.js";
 import RobotChatRouter from "./routes/robotChar.routes.js";
 // import FaydaAuthRouter from "./routes/faydaAuth.routes.js";
-import useSettingsRouter from "./routes/userSettings.routes.js"
+import userSettingsRouter from "./routes/userSettings.routes.js";
 import { notFound, errorHandler } from "./middleware/errorMiddleware.js";
+import test from "./routes/test.routes.js";
 import path from "path";
 import chatSocket from "./socket.js";
 
@@ -57,7 +58,8 @@ app.use("/api/support", SupportRouter);
 app.use("/api/help", HelpRouter);
 app.use("/api/robotchat", RobotChatRouter);
 app.use("/api/subscribe", PublicSubscriberRouter);
-app.use("/api/settings", useSettingsRouter)
+app.use("/api/settings", userSettingsRouter);
+app.use("/api/test", test);
 // app.use("/api/fayda-auth", FaydaAuthRouter);
 
 // Production-specific configuration

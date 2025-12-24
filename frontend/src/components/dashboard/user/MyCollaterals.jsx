@@ -106,10 +106,10 @@ const MyCollaterals = () => {
               onChange={(e) => setFilter(e.target.value)}
               className="px-4 py-2 rounded-xl bg-white/10 border border-white/20 text-white focus:outline-none focus:border-purple-400"
             >
-              <option value="all">All Collaterals</option>
-              <option value="approved">Approved</option>
-              <option value="pending">Pending</option>
-              <option value="rejected">Rejected</option>
+              <option value="all" className="bg-black/70">All Collaterals</option>
+              <option value="approved" className="bg-black/70">Approved</option>
+              <option value="pending" className="bg-black/70">Pending</option>
+              <option value="rejected" className="bg-black/70">Rejected</option>
             </select>
             <button
               onClick={() => setShowAddModal(true)}
@@ -549,10 +549,10 @@ const MyCollaterals = () => {
                 <div>
                   <label className="text-gray-400 text-sm">Type</label>
                   <select className="w-full px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:border-purple-400">
-                    <option value="">Select type</option>
-                    <option value="Equipment">Equipment</option>
-                    <option value="Document">Document</option>
-                    <option value="Financial">Financial</option>
+                    <option value="" className="bg-black/70">Select type</option>
+                    <option value="Equipment" className="bg-black/70">Equipment</option>
+                    <option value="Document" className="bg-black/70">Document</option>
+                    <option value="Financial" className="bg-black/70">Financial</option>
                   </select>
                 </div>
               </div>
@@ -576,10 +576,10 @@ const MyCollaterals = () => {
                 <div>
                   <label className="text-gray-400 text-sm">Category</label>
                   <select className="w-full px-4 py-2 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:border-purple-400">
-                    <option value="">Select category</option>
-                    <option value="Electronics">Electronics</option>
-                    <option value="Identity">Identity</option>
-                    <option value="Financial">Financial</option>
+                    <option value="" className="bg-black/70">Select category</option>
+                    <option value="Electronics" className="bg-black/70">Electronics</option>
+                    <option value="Identity" className="bg-black/70">Identity</option>
+                    <option value="Financial" className="bg-black/70">Financial</option>
                   </select>
                 </div>
               </div>

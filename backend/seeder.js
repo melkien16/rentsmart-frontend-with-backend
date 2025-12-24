@@ -11,6 +11,7 @@ import wallets from "./data/walets.js";
 import categories from "./data/category.js";
 import messages from "./data/message.js";
 import products from "./data/items.js";
+import settings from "./data/settings.js";
 
 import Product from "./models/itemModel.js";
 import User from "./models/userModel.js";
@@ -22,6 +23,7 @@ import Review from "./models/reviewModel.js";
 import SubscribeEmail from "./models/publicSubscribers.js";
 import Wallet from "./models/walletModel.js";
 import Collateral from "./models/collateralModel.js";
+import UserSettings from "./models/userSettingsModel.js";
 import connectDb from "./config/db.js";
 
 dotenv.config();
@@ -39,12 +41,14 @@ const importData = async () => {
     await SubscribeEmail.deleteMany();
     await Wallet.deleteMany();
     await Collateral.deleteMany();
+    await UserSettings.deleteMany();
 
     await Collateral.insertMany(collaterals);
     await Report.insertMany(reports);
     await Review.insertMany(reviews);
     await SubscribeEmail.insertMany(subscribeEmails);
     await Wallet.insertMany(wallets);
+    await UserSettings.insertMany(settings);
 
     const createdUsers = await User.insertMany(users);
     const adminUser = createdUsers[0]._id;

@@ -1,5 +1,6 @@
 import React from "react";
 import { Search, Calendar, Truck, RotateCcw } from "lucide-react";
+import { Link } from "react-router-dom";
 
 export const HowItWorks = () => {
   const steps = [
@@ -84,9 +85,9 @@ export const HowItWorks = () => {
 
         {/* CTA */}
         <div className="text-center mt-12 sm:mt-16">
-          <button className="px-5 sm:px-6 lg:px-8 py-3 sm:py-4 bg-gradient-to-r from-emerald-400 to-emerald-500 text-black font-bold rounded-xl hover:from-emerald-300 hover:to-emerald-400 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-emerald-400/25 text-sm sm:text-base w-full sm:w-auto">
+          <Link to={"/items"} className="px-5 sm:px-6 lg:px-8 py-3 sm:py-4 bg-gradient-to-r from-emerald-400 to-emerald-500 text-black font-bold rounded-xl hover:from-emerald-300 hover:to-emerald-400 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-emerald-400/25 text-sm sm:text-base w-full sm:w-auto">
             Start Your First Rental
-          </button>
+          </Link>
         </div>
       </div>
     </section>

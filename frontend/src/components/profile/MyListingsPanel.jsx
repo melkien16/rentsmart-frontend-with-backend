@@ -1,36 +1,44 @@
 import { useState } from "react";
 import { Calendar, Edit3, Trash2 } from "lucide-react";
+import {  useGetMylistingsQuery } from "../../slices/productsApiSlice";
+import Loader from "../ui/Loader";
 
 const MyListingsPanel = () => {
-  const [listings] = useState([
-    {
-      id: "1",
-      title: "Canon EOS 90D Camera",
-      image:
-        "https://images.pexels.com/photos/442559/pexels-photo-442559.jpeg?auto=compress&cs=tinysrgb&w=800",
-      price: 450,
-      createdAt: "2025-08-01",
-      status: "active",
-    },
-    {
-      id: "2",
-      title: "DJI Mavic Mini Drone",
-      image:
-        "https://images.pexels.com/photos/1363876/pexels-photo-1363876.jpeg?auto=compress&cs=tinysrgb&w=800",
-      price: 750,
-      createdAt: "2025-07-18",
-      status: "inactive",
-    },
-    {
-      id: "3",
-      title: "GoPro HERO10 Black",
-      image:
-        "https://images.pexels.com/photos/13723027/pexels-photo-13723027.jpeg?auto=compress&cs=tinysrgb&w=800",
-      price: 300,
-      createdAt: "2025-08-10",
-      status: "active",
-    },
-  ]);
+  // const [listings] = useState([
+  //   {
+  //     id: "1",
+  //     title: "Canon EOS 90D Camera",
+  //     image:
+  //       "https://images.pexels.com/photos/442559/pexels-photo-442559.jpeg?auto=compress&cs=tinysrgb&w=800",
+  //     price: 450,
+  //     createdAt: "2025-08-01",
+  //     status: "active",
+  //   },
+  //   {
+  //     id: "2",
+  //     title: "DJI Mavic Mini Drone",
+  //     image:
+  //       "https://images.pexels.com/photos/1363876/pexels-photo-1363876.jpeg?auto=compress&cs=tinysrgb&w=800",
+  //     price: 750,
+  //     createdAt: "2025-07-18",
+  //     status: "inactive",
+  //   },
+  //   {
+  //     id: "3",
+  //     title: "GoPro HERO10 Black",
+  //     image:
+  //       "https://images.pexels.com/photos/13723027/pexels-photo-13723027.jpeg?auto=compress&cs=tinysrgb&w=800",
+  //     price: 300,
+  //     createdAt: "2025-08-10",
+  //     status: "active",
+  //   },
+  // ]);
+
+  const { data, isLoading } = useGetMylistingsQuery();
+
+  const listings = data|| [];
+
+  if (isLoading) return <Loader />;
 
   return (
     <div className="bg-gray-900 border border-white/10 rounded-2xl p-6">
@@ -38,11 +46,11 @@ const MyListingsPanel = () => {
       <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {listings.map((listing) => (
           <div
-            key={listing.id}
+            key={listing._id}
             className="bg-gray-800 rounded-xl border border-white/10 overflow-hidden hover:border-emerald-500 transition"
           >
             <img
-              src={listing.image}
+              src={listing.images[0] || "https://via.placeholder.com/400x300"}
               alt={listing.title}
               className="w-full h-40 object-cover"
             />
@@ -52,7 +60,7 @@ const MyListingsPanel = () => {
                   {listing.title}
                 </h3>
                 <p className="text-emerald-400 font-semibold mt-1">
-                  ${listing.price} / day
+                  ${listing.price} / {listing.priceUnit}
                 </p>
                 <div className="flex items-center text-gray-400 text-sm mt-2">
                   <Calendar className="w-4 h-4 mr-1" />
@@ -60,7 +68,7 @@ const MyListingsPanel = () => {
                 </div>
                 <span
                   className={`mt-3 inline-block px-3 py-1 text-xs rounded-full ${
-                    listing.status === "active"
+                    listing.status === "Available"
                       ? "bg-emerald-500/20 text-emerald-400"
                       : "bg-gray-600/30 text-gray-400"
                   }`}

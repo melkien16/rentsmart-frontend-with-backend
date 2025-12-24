@@ -579,9 +579,8 @@ const AccountSettings = () => {
                     }
                     className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:border-indigo-400 transition-colors"
                   >
-                    <option value="public">Public</option>
-                    <option value="private">Private</option>
-                    <option value="friends">Friends Only</option>
+                    <option value="public" className="bg-black/70">Public</option>
+                    <option value="private" className="bg-black/70">Private</option>
                   </select>
                 </div>
 

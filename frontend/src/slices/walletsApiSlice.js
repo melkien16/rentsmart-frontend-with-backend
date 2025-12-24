@@ -1,4 +1,3 @@
-///api/wallets/:userId
 import { apiSlice } from "./apiSlice";
 import { WALLETS_URL } from "../constants";
 

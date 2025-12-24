@@ -9,3 +9,4 @@ export const NOTIFICATIONS_URL = "/api/notifications";
 export const SUBSCRIPTIONS_URL = "/api/subscribe";
 export const MESSAGE_URL = "/api/messages";
 export const UPLOAD_URL = "/api/upload";
+export const SETTINGS_URL = "/api/settings";

@@ -11,6 +11,22 @@ const allConversationsSlice = createSlice({
     setAllConversations: (state, action) => {
       state.allConversations = action.payload;
     },
+
+    addNewConversation: (state, action) => {
+      const newConv = action.payload;
+      const exists = state.allConversations.find(
+        (conv) => conv.conversationId === newConv.conversationId
+      );
+      if (!exists) {
+        state.allConversations.unshift(newConv);
+      } else {
+        state.allConversations = state.allConversations.filter(
+          (conv) => conv.conversationId !== newConv.conversationId
+        );
+        state.allConversations.unshift(exists);
+      }
+    },
+
     // Add a new message to the appropriate conversation
     addMessageToConversation: (state, action) => {
       const msg = action.payload;
@@ -36,7 +52,7 @@ const allConversationsSlice = createSlice({
   },
 });
 
-export const { setAllConversations, addMessageToConversation } =
+export const { setAllConversations, addMessageToConversation, addNewConversation } =
   allConversationsSlice.actions;
 
 export default allConversationsSlice.reducer;

@@ -3,7 +3,7 @@ import { SETTINGS_URL } from "../constants";
 
 export const settingsApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
-    getSettingsByUserId: builder.query({
+    getSettings: builder.query({
       query: () => ({
         url: SETTINGS_URL,
         method: "GET",
@@ -84,8 +84,8 @@ export const settingsApiSlice = apiSlice.injectEndpoints({
 });
 
 export const {
-  useGetSettingsByUserIdQuery,
-  useLazyGetSettingsByUserIdQuery,
+  useGetSettingsQuery,
+  useLazyGetSettingsQuery,
   useCreateUserSettingsMutation,
   useUpdateNotificationsMutation,
   useUpdateVisibilityMutation,

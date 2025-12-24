@@ -10,7 +10,6 @@ import {
   Shield,
   Crown,
   Heart,
-  MessageSquare,
   Star,
   AlertTriangle,
   Settings,
@@ -28,16 +27,12 @@ export const Sidebar = ({ activeSection, onSectionChange }) => {
     { id: "overview", label: "Dashboard", icon: LayoutDashboard },
     { id: "rentals", label: "My Rentals", icon: Package },
     { id: "listings", label: "My Listings", icon: Package },
-    // { id: "add-item", label: "Add New Products", icon: Plus },
     { id: "rental-requests", label: "Rental Requests", icon: Calendar },
-    // { id: "earnings", label: "Earnings", icon: DollarSign },
     { id: "wallet", label: "Wallet", icon: Wallet },
     { id: "collateral", label: "Collateral", icon: Shield },
     { id: "subscription", label: "Subscription", icon: Crown },
     { id: "favorites", label: "Favorites", icon: Heart },
-    { id: "messages", label: "Messages", icon: MessageSquare },
     { id: "reviews", label: "Reviews", icon: Star },
-    { id: "verification-status", label: "Verification Status", icon: Shield },
     { id: "support", label: "Report Problem", icon: AlertTriangle },
     { id: "settings", label: "Account Settings", icon: Settings },
   ];
@@ -63,17 +58,14 @@ export const Sidebar = ({ activeSection, onSectionChange }) => {
       {/* Header */}
       <div className="p-3 sm:p-4 border-b border-white/10 flex-shrink-0">
         <div className="flex items-center justify-between bg-white/5 rounded-xl border border-white/10">
-          <a href="/" className="flex items-center space-x-2 sm:space-x-3">
+          <Link to={"/"} className="flex items-center space-x-2 sm:space-x-3">
             <div className="w-6 h-6 sm:w-8 sm:h-8 md:h-14 md:w-14 rounded-lg flex items-center justify-center">
-              {/* <span className="text-black font-bold text-xs sm:text-sm">
-                RS
-              </span> */}
               <img src="/withBack.svg" alt="" />
             </div>
             <span className="text-white font-bold text-lg sm:text-base">
               RentSmart
             </span>
-          </a>
+          </Link>
         </div>
       </div>
 

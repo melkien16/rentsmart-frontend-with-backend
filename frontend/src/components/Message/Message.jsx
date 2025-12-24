@@ -1,7 +1,5 @@
 import { useState, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import dayjs from "dayjs";
-import relativeTime from "dayjs/plugin/relativeTime";
 
 import { useGetAllMessagesQuery } from "../../slices/messagesApiSlice";
 import {
@@ -13,8 +11,6 @@ import { Navbar } from "../navBar/Navbar";
 import DesktopView from "./DesktopView";
 import MobileView from "./MobileView";
 import { getSocket } from "../../socket";
-
-dayjs.extend(relativeTime);
 
 const Messages = () => {
   const [selectedConversation, setSelectedConversation] = useState(null);
@@ -31,6 +27,8 @@ const Messages = () => {
   const socket = getSocket();
   const conversationId = selectedConversation?.conversationId;
   const isTyping = typingUsers.hasOwnProperty(conversationId);
+
+  console.log("Typing Users:", typingUsers);
 
   const { data: messagesData, refetch } = useGetAllMessagesQuery(undefined, {
     refetchOnMountOrArgChange: true,
@@ -200,6 +198,7 @@ const Messages = () => {
               handleBackToSidebar={handleBackToSidebar}
               findConv={findConv}
               userInfo={userInfo}
+              handleTyping={handleTyping}
             />
           )}
         </div>

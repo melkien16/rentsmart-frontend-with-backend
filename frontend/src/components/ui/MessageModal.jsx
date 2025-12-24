@@ -39,7 +39,9 @@ const MessageModal = ({
       >
         <div className="text-center">
           {/* Icon */}
-          <div className={`w-20 h-20 ${bg} rounded-full flex items-center justify-center mx-auto mb-4`}>
+          <div
+            className={`w-20 h-20 ${bg} rounded-full flex items-center justify-center mx-auto mb-4`}
+          >
             {icon}
           </div>
 

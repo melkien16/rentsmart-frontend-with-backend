@@ -1,8 +1,34 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Save, Bell, Lock, User, Edit2, X } from "lucide-react";
+import { toast } from "react-toastify";
+import { useSelector } from "react-redux";
+import {
+  useGetSettingsQuery,
+  useUpdateNotificationsMutation,
+  useUpdatePasswordChangeDateMutation,
+} from "../../slices/useSettingsApiSlices";
+import {
+  useChangePasswordMutation,
+  useUpdateProfileMutation,
+} from "../../slices/usersApiSlice";
+
+// import MessageModal from "../ui/MessageModal";
 
 export default function SettingsPane() {
   const [editMode, setEditMode] = useState(false);
+  const { userInfo } = useSelector((state) => state.auth);
+  // const [modal, setModal] = useState({ isOpen: false, type: "info", title: "", message: "", description: "" });
+
+  const { data, isLoading, isError, error } = useGetSettingsQuery(
+    userInfo._id,
+    {
+      refetchOnMountOrArgChange: true,
+    }
+  );
+  const [updateNotifications] = useUpdateNotificationsMutation();
+  const [changePassword] = useChangePasswordMutation();
+  const [updatePasswordChangeDate] = useUpdatePasswordChangeDateMutation();
+  const [updateProfile] = useUpdateProfileMutation();
 
   const [profile, setProfile] = useState({
     name: "John Doe",
@@ -19,15 +45,58 @@ export default function SettingsPane() {
   const [notifications, setNotifications] = useState({
     email: true,
     sms: false,
-    push: true,
+    device: true,
   });
 
-  const handleSaveAll = () => {
-    console.log("Profile:", profile);
-    console.log("Password:", password);
-    console.log("Notifications:", notifications);
-    setEditMode(false);
+  const handleSaveAll = async () => {
+    try {
+      await updateNotifications(notifications);
+      await updateProfile(profile).unwrap();
+
+      const { current, new: newPwd, confirm } = password;
+
+      if (current.trim() || newPwd.trim() || confirm.trim()) {
+        if (newPwd === confirm) {
+          await changePassword({
+            currentPassword: current,
+            newPassword: newPwd,
+          }).unwrap();
+          updatePasswordChangeDate();
+          setPassword({ current: "", new: "", confirm: "" });
+        }
+        toast.error("New passwords do not match!");
+        setPassword({ current: "", new: "", confirm: "" });
+      }
+      toast.success("Profile updated successfully");
+      setEditMode(false);
+    } catch (error) {
+      toast.error(error.data.message || "Failed to save changes");
+      setPassword({ current: "", new: "", confirm: "" });
+    }
   };
+
+  useEffect(() => {
+    if (data) {
+      setProfile({
+        name: data.user.name,
+        email: data.user.email,
+        phone: data.user.phone,
+      });
+      setNotifications({
+        email: data.notifications.email.enabled,
+        sms: data.notifications.sms.enabled,
+        device: data.notifications.device.enabled,
+      });
+    }
+  }, [data]);
+
+  if (isLoading) {
+    return <div>Loading settings...</div>;
+  }
+
+  if (isError) {
+    return <div className="text-red-500">Error loading settings.</div>;
+  }
 
   return (
     <div className="space-y-8 p-6 bg-gray-900 rounded-xl border border-white/10">

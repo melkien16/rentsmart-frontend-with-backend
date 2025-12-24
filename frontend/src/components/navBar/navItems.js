@@ -1,8 +1,8 @@
-import { Home, TrendingUp } from "lucide-react";
+import { HelpCircle, Box } from "lucide-react";
 
 const navItems = [
-  { name: "Home", icon: Home, link: "/" },
-  { name: "Explore", icon: TrendingUp, link: "/explore" },
+  { name: "Browse", icon: Box, link: "/items" },
+  { name: "Support", icon: HelpCircle, link: "/support" },
 ];
 
 export default navItems;

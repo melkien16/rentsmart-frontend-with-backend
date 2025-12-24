@@ -4,8 +4,8 @@ import { useNavigate } from "react-router-dom";
 import { logout } from "../../slices/authSlice";
 import { useLogoutMutation } from "../../slices/usersApiSlice";
 import {
-  useGetNotificationsQuery,
   useMarkNotificationReadMutation,
+  useLazyGetNotificationsQuery,
 } from "../../slices/notificationsApiSlice";
 
 import Logo from "./Logo";
@@ -24,6 +24,7 @@ export const Navbar = () => {
   const [searchFocused, setSearchFocused] = useState(false);
   const [markNotificationRead] = useMarkNotificationReadMutation();
   const [selectedNotification, setSelectedNotification] = useState(null);
+  const [notifications, setNotifications] = useState(null);
 
   const [text, setText] = useState("");
   const [listening, setListening] = useState(false);
@@ -31,9 +32,21 @@ export const Navbar = () => {
 
   const { userInfo } = useSelector((state) => state.auth);
 
-  const { data: notifications = [] } = useGetNotificationsQuery(undefined, {
-    skip: !userInfo,
-  });
+  const [notificationsTrigger] = useLazyGetNotificationsQuery();
+  useEffect(() => {
+    const fetchNotifications = async () => {
+      try {
+        if (userInfo) {
+          const { data } = await notificationsTrigger();
+          if (data) setNotifications(data);
+        }
+      } catch (error) {
+        console.error("Error fetching notifications:", error);
+      }
+    };
+
+    fetchNotifications();
+  }, [userInfo, notificationsTrigger]);
 
   const userMenuRef = useRef(null);
   const notificationsRef = useRef(null);

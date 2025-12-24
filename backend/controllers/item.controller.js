@@ -276,6 +276,16 @@ const deleteItem = asyncHandler(async (req, res) => {
   }
 });
 
+// @desc    Get top rated items
+// @route   GET /api/items/top
+// @access  Public
+
+const getTopItems = asyncHandler(async (req, res) => {
+  const items = await Item.find({}).sort({ rating: -1 }).limit(5);
+
+  res.json(items);
+});
+
 export {
   getItems,
   getItemById,
@@ -285,4 +295,5 @@ export {
   getItemsByUserId,
   incrementItemViews,
   getMylistings,
+  getTopItems
 };

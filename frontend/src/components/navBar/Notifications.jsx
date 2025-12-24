@@ -1,7 +1,6 @@
 import React from "react";
 import { Bell, TrendingUp } from "lucide-react";
 
-
 const Notifications = ({
   notifications,
   unreadCount,

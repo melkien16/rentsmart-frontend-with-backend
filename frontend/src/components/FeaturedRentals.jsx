@@ -4,6 +4,7 @@ import { Card } from "./ui/Card";
 import { useNavigate } from "react-router-dom";
 import { useGetProductsQuery } from "../slices/productsApiSlice";
 import Loader from "./ui/Loader";
+import ProductCarousel from "./Courosal";
 
 export const FeaturedRentals = () => {
   const navigate = useNavigate();
@@ -12,14 +13,16 @@ export const FeaturedRentals = () => {
   let products = productsObject?.items || [];
 
   // fetch only 4 products for featured rentals
-  if (products && products.length > 4) {
-    products = products.slice(0, 4);
+  if (products && products.length > 8) {
+    products = products.slice(0, 8);
   }
 
   return (
     <section className="py-12 sm:py-16 lg:py-20 bg-gray-900">
       <div className="w-full max-w-[95%] mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
+        <ProductCarousel />
+
         <div className="text-center mb-12 sm:mb-16">
           <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-3 sm:mb-4">
             Featured <span className="text-emerald-400">Rentals</span>

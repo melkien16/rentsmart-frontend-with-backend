@@ -5,6 +5,7 @@ const MobileInput = ({
   newMessage,
   setNewMessage,
   handleSendMessage,
+  handleTyping,
 }) => {
   return (
     <div className="p-4 border-t border-white/10">
@@ -13,7 +14,10 @@ const MobileInput = ({
           type="text"
           placeholder="Type your message..."
           value={newMessage}
-          onChange={(e) => setNewMessage(e.target.value)}
+          onChange={(e) => {
+            setNewMessage(e.target.value);
+            handleTyping(e);
+          }}
           onKeyDown={(e) => e.key === "Enter" && handleSendMessage()}
           className="flex-1 px-4 py-2 bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:border-blue-400"
         />

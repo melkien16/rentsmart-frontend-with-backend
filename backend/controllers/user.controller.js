@@ -149,6 +149,33 @@ const updateUserProfile = asyncHandler(async (req, res) => {
   }
 });
 
+// @desk    update password
+// @route  PUT /api/users/profile/password
+// @access  Private
+const updateUserPassword = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.user._id);
+  const { currentPassword, newPassword } = req.body;
+
+  if (user) {
+    if (currentPassword && newPassword) {
+      if (await user.matchPassword(currentPassword)) {
+        user.password = newPassword;
+        await user.save();
+        res.status(200).json({ message: "Password updated successfully" });
+      } else {
+        res.status(400);
+        throw new Error("Current password is incorrect");
+      }
+    } else {
+      res.status(400);
+      throw new Error("Please provide current and new password");
+    }
+  } else {
+    res.status(404);
+    throw new Error("User not found");
+  }
+});
+
 // @desc    Get all users
 // @route  GET /api/users
 // @access  Private/Admin
@@ -272,4 +299,5 @@ export {
   updateUser,
   getUserPublicById,
   getUserByEmail,
+  updateUserPassword,
 };
